@@ -26,11 +26,11 @@ Enter answers to the questions just below the >Answer: prompt.
 
 2. Are there any components of the course about which you feel confident?
 
-> Answer: As mentioned above, I do have some knowledge of R, so I feel confident in some of those abilities. I worked with very large and complex biodiversity monitoring datasets, which taught me the importance of data cleaning. I was also able to create some fairly complex graphs and maps. 
+> Answer: As mentioned above, I do have some knowledge of R, so I feel confident in some of those abilities. I worked with very large and complex biodiversity monitoring datasets, which taught me the importance of data cleaning. I was also able to create some fairly complex graphs and maps. I feel pretty comfortable using ggplot (especially playing around with the colors (I love the wes anderson package)).
 
 3. Are there any components of the course about which you feel apprehensive?
 
-> Answer: 
+> Answer: I feel most apprehensive about just keeping my data organized. Because I did not formally learn R, I really just kept my code in random places. I have no prior knowledge of github, which I think will be hard for me to adjust to but greatly helpful in the long run! I am also nervous for the coding assignments later in the term, as I have very little coding knowledge. It's hard for me to look at data and think of how best to go about starting analyses, but I know I will learn these skills in this class. I'm excited to learn!
 
 
 ## 2) GitHub
