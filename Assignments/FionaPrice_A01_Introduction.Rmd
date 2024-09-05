@@ -22,11 +22,11 @@ Enter answers to the questions just below the >Answer: prompt.
 
 1. What are your previous experiences with data analytics, R, and Git? Include both formal and informal training.
 
-> Answer: 
+> Answer: I have some R experience and extensive Xcel experience. I taught myself R for a research project during college. I can do data cleaning and some data analyses (such as linear regressions) and can create a variety of graphs. However, since my R training was never formal I am not very confident in my abilities. I used Xcel for my consulting job last year; I worked with rather large data sets and learned how to clean my data and index match. 
 
 2. Are there any components of the course about which you feel confident?
 
-> Answer: 
+> Answer: As mentioned above, I do have some knowledge of R, so I feel confident in some of those abilities. I worked with very large and complex biodiversity monitoring datasets, which taught me the importance of data cleaning. I was also able to create some fairly complex graphs and maps. 
 
 3. Are there any components of the course about which you feel apprehensive?
 
