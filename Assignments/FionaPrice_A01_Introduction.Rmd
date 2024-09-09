@@ -32,7 +32,6 @@ Enter answers to the questions just below the >Answer: prompt.
 
 > Answer: I feel most apprehensive about just keeping my data organized. Because I did not formally learn R, I really just kept my code in random places. I have no prior knowledge of github, which I think will be hard for me to adjust to but greatly helpful in the long run! I am also nervous for the coding assignments later in the term, as I have very little coding knowledge. It's hard for me to look at data and think of how best to go about starting analyses, but I know I will learn these skills in this class. I'm excited to learn!
 
-
 ## 2) GitHub
 
 Provide a link below to your forked course repository in GitHub. Make sure you have pulled all recent changes from the course repository and that you have updated your course README file, committed those changes, and pushed them to your GitHub account. 
