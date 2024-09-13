@@ -89,7 +89,7 @@ student_info
 
 9.  QUESTION: How is this data frame different from a matrix?
 
-> Answer:
+> Answer: A data frame contains different classes of data, while a matrix only includes one. This data frame includes three different classes (character, numeric, and logical).
 
 10. Create a function with one input. In this function, use `if`...`else` to evaluate the value of the input: if it is greater than 50, print the word "Pass"; otherwise print the word "Fail". 
 
@@ -100,41 +100,46 @@ student_info
 13. Run both functions using the **vector** of student test scores you created as the input. (Only one will work properly...)
 
 ```{r basics 3}
-#10. Create a function using if...else
+#10. Create a function using if...else. First, create a function with one input.
 my.function <- (42)
-my.function
+#Now use if...else to evaluate the value of the input. 
 if(my.function > 50){
   print("Pass")
 } else print("Fail")
+#The function fails. 
 
-#11. Create a function using ifelse()
+
+#11. Create a function using ifelse(). The "test" is my.function > 50, the "yes" is "Pass" and the "no" is "Fail.
 ifelse(my.function > 50, "Pass", "Fail")
+#The function fails. 
 
-#12a. Run the first function with the value 52.5
+#12a. Run the first function with the value 52.5.
 my.function <- (52.5)
 my.function
 if(my.function > 50){
   print("Pass")
 } else print("Fail")
+#The function passes.
 
 #12b. Run the second function with the value 52.5
 ifelse(my.function > 50, "Pass", "Fail")
+#The function passes.
 
-#13a. Run the first function with the vector of test scores
+#13a. Run the first function with the vector of test scores. First, set my.function to be equal to test_scores.
 my.function <- test_scores
-my.function
-#The following only works if I use "any" before my.function. Otherwise, it returns "the condition has length > 1.
-if(any(my.function > 50)){
-  print("Pass")
-} else print("Fail")
 
-#13b. Run the second function with the vector of test scores
+#The following does not work. It returns "the condition has length > 1. 
+#if(my.function > 50){
+#  print("Pass")
+#} else print("Fail")
+
+#13b. Run the second function with the vector of test scores. 
 ifelse(my.function > 50, "Pass", "Fail")
+#Each test score passes.
 ```
 
 14. QUESTION: Which option of `if`...`else` vs. `ifelse` worked? Why? (Hint: search the web for "R vectorization")
 
-> Answer:
-
+> Answer: The `ifelse` option worked, while the `if`...`else` failed. This is because `if`...`else` only operates on one value, while `ifelse` on the whole vector. In the case of test_scores there are three values, so we need to use `ifelse` . Vectorization is when an operation is performed on whole vectors rather than on individuals values. `ifelse` is therefore the vectorized version of `if`...`else. I did find that `if`...`else works if I use any() before my.function because then it tells R to look at each test score value.
 
 **NOTE** Before knitting, you'll need to comment out the call to the function in Q13 that does not work. (A document can't knit if the code it contains causes an error!)
