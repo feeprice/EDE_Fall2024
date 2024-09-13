@@ -60,7 +60,7 @@ You need to load packages each time you start (or restart) an R coding session; 
 ```{r Setup: Loading Packages}
 #Install packages - uncomment these only when you need to install packages
 #install.packages('dplyr')
-#install.packages('ggplot')
+#install.packages('ggplot2')
 #install.packages('here')
 
 #Load the tidyverse, ggplot2, and here package
@@ -144,11 +144,18 @@ Prior to running this, reset your workspace (Session->Restart R) to ensure it ru
 
 ```{r Setup}
 # Load packages
+library(dplyr)
+library(ggplot2)
+library(here)
+library(tidyverse)
 
 # Confirm working directory
+getwd()
 
 # Load the USGS flow data into a data frame
-
+USGS.flow.data <- read.csv(
+  file = here("./Data/Raw/USGS_Site02085000_Flow_Raw.csv"),
+  stringsAsFactors = TRUE)   
 ```
 
 ---
