@@ -1,6 +1,6 @@
 ---
 title: "Assignment 2: Coding Basics"
-author: "Student Name"
+author: "Fiona Price"
 output: pdf_document
 geometry: margin=2.54cm
 editor_options: 
@@ -31,11 +31,25 @@ This exercise accompanies the lessons/labs in Environmental Data Analytics on co
 4.  Insert comments in your code to describe what you are doing.
 
 ```{r basics 1}
-#1. 
+#1. Use the seq() function to generate a sequence of numbers from 1 to 55. The "from" argument is 1, the "to" argument is 55, and the "by" argument is 5.
+num_sequence <- seq(1,55,5)
+num_sequence
 
-#2. 
+#2. Use the mean() function to find the mean of my sequence. Use the median() function to find the median of my sequence.
+mean_seq <- mean(num_sequence)
+mean_seq
+#Mean is 26.
+median_seq <- median(num_sequence)
+median_seq
+#Median is also 26. 
 
-#3. 
+#3. Use <, >, and == to see if the relationship between the mean and median. These will return "TRUE" or "FALSE" statements.
+mean_seq < median_seq
+#False, which means mean is not less than median
+mean_seq > median_seq
+#False, which means mean is not greater than median
+mean_seq == median_seq
+#True, which means mean is equal to median
 
 ```
 
@@ -50,7 +64,26 @@ This exercise accompanies the lessons/labs in Environmental Data Analytics on co
 8.  Label the columns of your data frame with informative titles.
 
 ```{r basics 2}
+#5. Create a vector with student names
+student_names <- c("Alice", "Maddie", "Malaika")
+#Create a vector with grades
+test_scores <- c(87, 83, 92)
+#Create a vector that indicates whether they are on scholarship or not
+scholarship <- c(TRUE, FALSE, TRUE)
 
+#6. Use class() to identify what type each vector is
+class(student_names) #Character 
+class(test_scores) #Numeric 
+class(scholarship) #Logical
+
+#7. Combine each vector into a data frame using data.frame(x,y,z)
+student_info <- data.frame(student_names, test_scores, scholarship)
+
+#8. Label the columns of my data frame with informative titles using names(). 
+names(student_info) <- c("Student Names","Test Scores","Scholarship")
+
+#Check my data frame
+student_info
 
 ```
 
