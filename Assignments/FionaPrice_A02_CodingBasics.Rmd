@@ -31,11 +31,13 @@ This exercise accompanies the lessons/labs in Environmental Data Analytics on co
 4.  Insert comments in your code to describe what you are doing.
 
 ```{r basics 1}
-#1. Use the seq() function to generate a sequence of numbers from 1 to 55. The "from" argument is 1, the "to" argument is 55, and the "by" argument is 5.
+#1. Use the seq() function to generate a sequence of numbers from 1 to 55. 
+#The "from" argument is 1, the "to" argument is 55, and the "by" argument is 5.
 num_sequence <- seq(1,55,5)
 num_sequence
 
-#2. Use the mean() function to find the mean of my sequence. Use the median() function to find the median of my sequence.
+#2. Use the mean() function to find the mean of my sequence. Use the median() 
+#function to find the median of my sequence.
 mean_seq <- mean(num_sequence)
 mean_seq
 #Mean is 26.
@@ -43,33 +45,37 @@ median_seq <- median(num_sequence)
 median_seq
 #Median is also 26. 
 
-#3. Use <, >, and == to see if the relationship between the mean and median. These will return "TRUE" or "FALSE" statements.
+#3. Use <, >, and == to see if the relationship between the mean and median. 
+#These will return "TRUE" or "FALSE" statements.
 mean_seq < median_seq
-#False, which means mean is not less than median
+#False; mean is not less than median.
 mean_seq > median_seq
-#False, which means mean is not greater than median
+#False; mean is not greater than median.
 mean_seq == median_seq
-#True, which means mean is equal to median
+#True; mean is equal to median.
 
 ```
 
 ## Basics, Part 2
 
-5.  Create three vectors, each with four components, consisting of (a) student names, (b) test scores, and (c) whether they are on scholarship or not (TRUE or FALSE).
+5.  Create three vectors, each with four components, consisting of (a) student 
+names, (b) test scores, and (c) whether they are on scholarship or not 
+(TRUE or FALSE).
 
 6.  Label each vector with a comment on what type of vector it is.
 
-7.  Combine each of the vectors into a data frame. Assign the data frame an informative name.
+7.  Combine each of the vectors into a data frame. Assign the data frame an 
+informative name.
 
 8.  Label the columns of your data frame with informative titles.
 
 ```{r basics 2}
 #5. Create a vector with student names
-student_names <- c("Alice", "Maddie", "Malaika")
+student_names <- c("Alice", "Maddie", "Malaika", "Grace")
 #Create a vector with grades
-test_scores <- c(87, 83, 92)
+test_scores <- c(87, 83, 92, 95)
 #Create a vector that indicates whether they are on scholarship or not
-scholarship <- c(TRUE, FALSE, TRUE)
+scholarship <- c(TRUE, FALSE, TRUE, TRUE)
 
 #6. Use class() to identify what type each vector is
 class(student_names) #Character 
@@ -89,15 +95,21 @@ student_info
 
 9.  QUESTION: How is this data frame different from a matrix?
 
-> Answer: A data frame contains different classes of data, while a matrix only includes one. This data frame includes three different classes (character, numeric, and logical).
+> Answer: A data frame contains different classes of data, while a matrix only 
+includes one. This data frame includes three different classes 
+(character, numeric, and logical).
 
-10. Create a function with one input. In this function, use `if`...`else` to evaluate the value of the input: if it is greater than 50, print the word "Pass"; otherwise print the word "Fail". 
+10. Create a function with one input. In this function, use `if`...`else` to 
+evaluate the value of the input: if it is greater than 50, print the word 
+"Pass"; otherwise print the word "Fail". 
 
-11. Create a second function that does the exact same thing as the previous one but uses `ifelse()` instead if `if`...`else `. 
+11. Create a second function that does the exact same thing as the previous one 
+but uses `ifelse()` instead if `if`...`else `. 
 
 12. Run both functions using the value 52.5 as the input
 
-13. Run both functions using the **vector** of student test scores you created as the input. (Only one will work properly...)
+13. Run both functions using the **vector** of student test scores you created 
+as the input. (Only one will work properly...)
 
 ```{r basics 3}
 #10. Create a function using if...else. First, create a function with one input.
@@ -109,13 +121,15 @@ if(my.function > 50){
 #The function fails. 
 
 
-#11. Create a function using ifelse(). The "test" is my.function > 50, the "yes" is "Pass" and the "no" is "Fail.
+#11. Create a function using ifelse(). The "test" is my.function > 50, the 
+#"yes" is "Pass" and the "no" is "Fail.
 ifelse(my.function > 50, "Pass", "Fail")
 #The function fails. 
 
 #12a. Run the first function with the value 52.5.
 my.function <- (52.5)
 my.function
+
 if(my.function > 50){
   print("Pass")
 } else print("Fail")
@@ -125,7 +139,8 @@ if(my.function > 50){
 ifelse(my.function > 50, "Pass", "Fail")
 #The function passes.
 
-#13a. Run the first function with the vector of test scores. First, set my.function to be equal to test_scores.
+#13a. Run the first function with the vector of test scores. 
+#First, set my.function to be equal to test_scores.
 my.function <- test_scores
 
 #The following does not work. It returns "the condition has length > 1. 
@@ -138,8 +153,17 @@ ifelse(my.function > 50, "Pass", "Fail")
 #Each test score passes.
 ```
 
-14. QUESTION: Which option of `if`...`else` vs. `ifelse` worked? Why? (Hint: search the web for "R vectorization")
+14. QUESTION: Which option of `if`...`else` vs. `ifelse` worked? Why? 
+(Hint: search the web for "R vectorization")
 
-> Answer: The `ifelse` option worked, while the `if`...`else` failed. This is because `if`...`else` only operates on one value, while `ifelse` on the whole vector. In the case of test_scores there are three values, so we need to use `ifelse` . Vectorization is when an operation is performed on whole vectors rather than on individuals values. `ifelse` is therefore the vectorized version of `if`...`else. I did find that `if`...`else works if I use any() before my.function because then it tells R to look at each test score value.
+> Answer: The `ifelse` option worked, while the `if`...`else` failed. This is 
+because `if`...`else` only operates on one value, while `ifelse` on the whole 
+vector. In the case of test_scores there are three values, so we need to use 
+`ifelse` . Vectorization is when an operation is performed on whole vectors 
+rather than on individuals values. `ifelse` is therefore the vectorized version 
+of `if`...`else. I did find that `if`...`else works if I use any() before 
+my.function because then it tells R to look at each test score value.
 
-**NOTE** Before knitting, you'll need to comment out the call to the function in Q13 that does not work. (A document can't knit if the code it contains causes an error!)
+**NOTE** Before knitting, you'll need to comment out the call to the function 
+in Q13 that does not work. (A document can't knit if the code it contains causes 
+an error!)
