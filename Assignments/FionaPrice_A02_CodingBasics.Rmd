@@ -122,7 +122,6 @@ over50 <- function(x){
   }
 }
 
-my.function
 
 #11. Create a second function that does the exact same thing as the previous one 
 #but uses `ifelse()` instead if `if`...`else `.
