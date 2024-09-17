@@ -113,43 +113,38 @@ as the input. (Only one will work properly...)
 
 ```{r basics 3}
 #10. Create a function using if...else. First, create a function with one input.
-my.function <- (42)
-#Now use if...else to evaluate the value of the input. 
-if(my.function > 50){
-  print("Pass")
-} else print("Fail")
-#The function fails. 
+over50 <- function(x){
+  if (x > 50){
+    print ("Pass")
+  }
+  else{
+    print("Fail")
+  }
+}
 
-
-#11. Create a function using ifelse(). The "test" is my.function > 50, the 
-#"yes" is "Pass" and the "no" is "Fail.
-ifelse(my.function > 50, "Pass", "Fail")
-#The function fails. 
-
-#12a. Run the first function with the value 52.5.
-my.function <- (52.5)
 my.function
 
-if(my.function > 50){
-  print("Pass")
-} else print("Fail")
+#11. Create a second function that does the exact same thing as the previous one 
+#but uses `ifelse()` instead if `if`...`else `.
+over50_rerun <- function(x){
+  ifelse(x > 50, "Pass", "Fail")
+}
+
+#12a. Run the first function with the value 52.5.
+over50(52.5)
 #The function passes.
 
 #12b. Run the second function with the value 52.5
-ifelse(my.function > 50, "Pass", "Fail")
+over50_rerun(52.5)
 #The function passes.
 
 #13a. Run the first function with the vector of test scores. 
 #First, set my.function to be equal to test_scores.
-my.function <- test_scores
-
-#The following does not work. It returns "the condition has length > 1. 
-#if(my.function > 50){
-#  print("Pass")
-#} else print("Fail")
+#over50(test_scores)
+#This does not work. It returns "the condition has length > 1. 
 
 #13b. Run the second function with the vector of test scores. 
-ifelse(my.function > 50, "Pass", "Fail")
+over50_rerun(test_scores)
 #Each test score passes.
 ```
 
@@ -158,11 +153,10 @@ ifelse(my.function > 50, "Pass", "Fail")
 
 > Answer: The `ifelse` option worked, while the `if`...`else` failed. This is 
 because `if`...`else` only operates on one value, while `ifelse` on the whole 
-vector. In the case of test_scores there are three values, so we need to use 
+vector. In the case of test_scores there are four values, so we need to use 
 `ifelse` . Vectorization is when an operation is performed on whole vectors 
 rather than on individuals values. `ifelse` is therefore the vectorized version 
-of `if`...`else. I did find that `if`...`else works if I use any() before 
-my.function because then it tells R to look at each test score value.
+of `if`...`else. 
 
 **NOTE** Before knitting, you'll need to comment out the call to the function 
 in Q13 that does not work. (A document can't knit if the code it contains causes 
