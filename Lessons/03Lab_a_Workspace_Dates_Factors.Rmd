@@ -3,6 +3,8 @@ title: "Lab 3b - Workspaces, Dates, and Factors"
 author: "Environmental Data Analytics | John Fay and Luana Lima "
 date: "Fall 2024"
 output: pdf_document
+editor_options: 
+  chunk_output_type: console
 ---
 
 ## Objectives
@@ -38,6 +40,7 @@ And thus we introduce the `here` package, designed to streamline this process. A
 ```{r The here package}
 #install.packages('here')
 library(here) #Note this package may conflict with plyr and lubridate
+library(tidyverse)
 
 #The command `here()` points to the location containing the ".Rrpoj" file, i.e. 
 # the project directory...
@@ -78,9 +81,16 @@ print(filenames)
 ```{r here in action}
 
 # 1. Read the 'NTL-LTER_Lake_ChemistryPhysics_Raw.csv' into a dataframe
-
+NTL_LTER_Lake_ChemistryPhysics_Raw  <- read.csv(
+  file = here("./Data/Raw/NTL-LTER_Lake_ChemistryPhysics_Raw.csv"),
+  stringsAsFactors = TRUE)
 
 # 2.
+EPAair_O3_files <- dir(here('Data', 'Raw'), pattern = "EPAair_O3*")
+EPAair_O3_files
+#EPAair_O3.df <- EPAair_O3_files %>% 
+#  map(read.csv) %>% 
+#  reduce(rbind)
 
 
 ```
@@ -132,9 +142,9 @@ date_obj_today
 
 #Ex_3 - on your own...
 str_juneteenth <- "19 June 1865"
-#Since the format is month-day-year we will use function mdy()
-#date_juneteenth <- ()
-#date_juneteenth
+
+date_juneteenth <- dmy(str_juneteenth)
+date_juneteenth
 ```
 ### The century issue
 
