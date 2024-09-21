@@ -137,14 +137,17 @@ class(neonics$Conc.1..Author.)
 9.  Using `geom_freqpoly`, generate a plot of the number of studies conducted by publication year.
 
 ```{r}
-
+ggplot(neonics, aes(Publication.Year)) +
+         geom_freqpoly()
 
 ```
 
 10. Reproduce the same graph but now add a color aesthetic so that different Test.Location are displayed as different colors.
 
 ```{r}
-
+ggplot(neonics, aes(Publication.Year, color = Test.Location)) +
+         geom_freqpoly() +
+  labs(color = "Test Location") 
 
 ```
 
@@ -157,7 +160,9 @@ Interpret this graph. What are the most common test locations, and do they diffe
 [**TIP**: Add `theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1))` to the end of your plot command to rotate and align the X-axis labels...]
 
 ```{r}
-
+ggplot(neonics, aes(Endpoint)) +
+  geom_bar() +
+  theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1))
 
 ```
 
@@ -168,15 +173,18 @@ Interpret this graph. What are the most common test locations, and do they diffe
 12. Determine the class of collectDate. Is it a date? If not, change to a date and confirm the new class of the variable. Using the `unique` function, determine which dates litter was sampled in August 2018.
 
 ```{r}
-
+class(litter$collectDate)
+litter$collectDate <- as.Date(litter$collectDate)
+class(litter$collectDate)
+unique(litter$collectDate)
 
 ```
 
 13. Using the `unique` function, determine how many different plots were sampled at Niwot Ridge. How is the information obtained from `unique` different from that obtained from `summary`?
 
 ```{r}
-
-
+unique(litter$namedLocation)
+summary(litter$namedLocation)
 ```
 
 > Answer:
