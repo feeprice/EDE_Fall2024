@@ -72,7 +72,6 @@ litter <- read.csv(
 ```{r}
 dim(neonics)
 #The dataset has 4623 rows and 30 columns.
-
 ```
 
 6.  Using the `summary` function on the "Effect" column, determine the most common effects that are studied. Why might these effects specifically be of interest? [Tip: The `sort()` command is useful for listing the values in order of magnitude...]
@@ -89,8 +88,7 @@ neonics_summary <- table(neonics$Effect)
 sorted_neonics_summary <- sort(neonics_summary, decreasing = TRUE)
 sorted_neonics_summary
 
-#Population is the most common effect. 
-
+#Population is the most common effect. Mortality is the second most common.
 ```
 
 > Answer:
@@ -160,13 +158,20 @@ Interpret this graph. What are the most common test locations, and do they diffe
 [**TIP**: Add `theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1))` to the end of your plot command to rotate and align the X-axis labels...]
 
 ```{r}
-ggplot(neonics, aes(Endpoint)) +
-  geom_bar() +
-  theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1))
+ggplot(neonics, aes(Endpoint)) + #Our data is neonics; our x-axis is endpoint.
+  geom_bar() + #This indicates we want a bar plot.
+  theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1)) #This 
+#rotates and aligns and the x-axis labels so we can see them clearly. 
 
 ```
 
-> Answer:
+> Answer: The two most common endpoints are LOEL and NOEL. LOEL is defined as
+the Lowest-observable-effect-level: lowest dose (concentration) producing 
+effects that were significantly different (as reported by authors) from 
+responses of controls (LOEAL/LOEC). NOEL is defined as 
+no-observable-effect-level: highest dose (concentration) producing effects not 
+significantly different from responses of controls according to author's 
+reported statistical test (NOEAL/NOEC).
 
 ## Explore your data (Litter)
 
@@ -183,11 +188,19 @@ unique(litter$collectDate)
 13. Using the `unique` function, determine how many different plots were sampled at Niwot Ridge. How is the information obtained from `unique` different from that obtained from `summary`?
 
 ```{r}
+#Use unique to determine how many different plots were sampled at Niwot Ridge.
 unique(litter$namedLocation)
+#There are 12 levels, so 12 different plots were sampled.
+
+#Use summary to determine how many different plots were sampled at Niwot Ridge.
 summary(litter$namedLocation)
+#This returned the sample counts at each plot.
 ```
 
-> Answer:
+> Answer: `unique` returns the number of levels of our data (12). `summary` 
+returns the number of counts of each level. We can still find the number of 
+levels using summary by manually counting the number of categories in the 
+output.
 
 14. Create a bar graph of functionalGroup counts. This shows you what type of litter is collected at the Niwot Ridge sites. Notice that litter types are fairly equally distributed across the Niwot Ridge sites.
 
