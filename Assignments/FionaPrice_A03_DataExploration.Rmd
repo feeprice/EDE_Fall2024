@@ -39,9 +39,12 @@ library(ggplot2)
 library(here)
 library(tidyverse)
 
+#Upload the Neonics dataset
 neonics <- read.csv(
   file = here("./Data/Raw/ECOTOX_Neonicotinoids_Insects_raw.csv"),
   stringsAsFactors = TRUE)  
+
+#Upload the Litter dataset
 litter <- read.csv(
   file = here("./Data/Raw/NEON_NIWO_Litter_massdata_2018-08_raw.csv"),
   stringsAsFactors = TRUE)  
@@ -52,24 +55,40 @@ litter <- read.csv(
 
 2.  The neonicotinoid dataset was collected from the Environmental Protection Agency's ECOTOX Knowledgebase, a database for ecotoxicology research. Neonicotinoids are a class of insecticides used widely in agriculture. The dataset that has been pulled includes all studies published on insects. Why might we be interested in the ecotoxicology of neonicotinoids on insects? Feel free to do a brief internet search if you feel you need more background information.
 
-> Answer:
+> Answer: Neonicotinoids were originally introduced as a less harmful insecticide.
+However, research now shows that they are harmful to insects. For example, they
+are very harmful to bees. The chemicals are absorbed by plants and are thus 
+present in pollen and nectar. Additionally, they have long-lasting lifespans in
+plants. Overall, we are interested in the ecotoxicology of neonicotinoids on
+insects because they will affect insect populations, which will then have a 
+cascading effect on ecosystems, as many of these insects are beneficial. 
 
 3.  The Niwot Ridge litter and woody debris dataset was collected from the National Ecological Observatory Network, which collectively includes 81 aquatic and terrestrial sites across 20 ecoclimatic domains. 32 of these sites sample forest litter and woody debris, and we will focus on the Niwot Ridge long-term ecological research (LTER) station in Colorado. Why might we be interested in studying litter and woody debris that falls to the ground in forests? Feel free to do a brief internet search if you feel you need more background information.
 
-> Answer:
+> Answer: Litter and woody debris has many important ecological functions. First,
+litter and woody debris breaks down organic matter and returns nutrients back
+into the soil. Second, they provide habitat for organisms (including insects),
+helping to sustain biodiversity. Third, litter and woody debris helps retain 
+moisture in the soil which is necessary for plant growth. They can also 
+stabilize soils, helping to prevent erosion. Litter and woody debris are crucial
+for preserving biodiversity in ecosystems. 
 
 4.  How is litter and woody debris sampled as part of the NEON network? Read the NEON_Litterfall_UserGuide.pdf document to learn more. List three pieces of salient information about the sampling methods here:
 
 > Answer: 
- 1.
- 2.
- 3. 
+ 1. Litter and woody debris are collected from ground traps and elevated traps.
+ These samples are then weighed. 
+ 2. Traps are placed in both targeted and randomized ways, depending on 
+ vegetation. Traps are only placed in tower plots. 
+ 3. Ground traps are sampled once per year, while elevated traps are sampled
+ at varying frequencies depending on amount of vegetation.
 
 ## Obtain basic summaries of your data (Neonics)
 
 5.  What are the dimensions of the dataset?
 
 ```{r}
+#Use the `dim` function to find the number of rows and columns in the dataset
 dim(neonics)
 #The dataset has 4623 rows and 30 columns.
 ```
@@ -77,13 +96,13 @@ dim(neonics)
 6.  Using the `summary` function on the "Effect" column, determine the most common effects that are studied. Why might these effects specifically be of interest? [Tip: The `sort()` command is useful for listing the values in order of magnitude...]
 
 ```{r}
-#Use the summary function to look at an overview of the types of effects.
+#Use the `summary` function to look at an overview of the types of effects
 summary(neonics$Effect)
 
-#Create a table summarizing these effects.
+#Create a table summarizing these effects
 neonics_summary <- table(neonics$Effect)
 
-#Now, sort the table using the sort function. Decreasing = TRUE indicates that
+#Now, sort the table using the `sort` function. Decreasing = TRUE indicates that
 #the sort should be decreasing (so it starts with the most common effect).
 sorted_neonics_summary <- sort(neonics_summary, decreasing = TRUE)
 sorted_neonics_summary
@@ -91,7 +110,10 @@ sorted_neonics_summary
 #Population is the most common effect. Mortality is the second most common.
 ```
 
-> Answer:
+> Answer: Population is the most common effect. Mortality is the second most
+common. These effects are specifically of interest because they reflect the 
+impact that neonicotinoids have on insect population sizes. This data can be
+useful for predicting ecosystem dynamics. 
 
 
 7.  Using the `summary` function, determine the six most commonly studied species in the dataset (common name). What do these species have in common, and why might they be of interest over other insects? Feel free to do a brief internet search for more information if needed.[TIP: Explore the help on the `summary()` function, in particular the `maxsum` argument...]
@@ -116,36 +138,51 @@ sorted_neonics_species
 summary(neonics$Species.Common.Name, maxsum = 7)
 ```
 
-> Answer:
+> Answer: The six most commonly studied species are the honey bee, parasitic 
+wasp, buff tailed bumblebee, carniolan honey bee, bumble bee, and Italian 
+honeybee. Most of these species are pollinators; they are therefore of more 
+interest because pollination is crucial for plant reproduction. Although 
+parasitic wasps are not pollinators, they too are can indirectly contribute to 
+plant reproduction. 
 
 8.  Concentrations are always a numeric value. What is the class of `Conc.1..Author.` column in the dataset, and why is it not numeric? [Tip: Viewing the dataframe may be helpful...]
 
 ```{r}
+#Use the `view` function to view the dataframe. 
+view(neonics)
 
-view(neonics$Conc.1..Author.)
+#Use the `class` function to view the class of the `Conc.1..Author` column.
 class(neonics$Conc.1..Author.)
 #The class is factor.
 
+#Examine the specific categories. 
+summary(neonics$Conc.1..Author.)
+
 ```
 
-> Answer:
+> Answer: The class is factor. It is not numeric. Factors are categorical; 
+because some of the data entries include "/" after the number, R reads this data
+as a factor rather than a number. 
 
 ## Explore your data graphically (Neonics)
 
 9.  Using `geom_freqpoly`, generate a plot of the number of studies conducted by publication year.
 
 ```{r}
-ggplot(neonics, aes(Publication.Year)) +
-         geom_freqpoly()
+ggplot(neonics, aes(Publication.Year)) + #Specify which data frame and which
+  #column to use along the x-axis
+         geom_freqpoly() #Specify the type of plot to be used
 
 ```
 
 10. Reproduce the same graph but now add a color aesthetic so that different Test.Location are displayed as different colors.
 
 ```{r}
-ggplot(neonics, aes(Publication.Year, color = Test.Location)) +
-         geom_freqpoly() +
-  labs(color = "Test Location") 
+ggplot(neonics, aes(Publication.Year, color = Test.Location)) + #Specify which
+  #data frrame and which column to use along the x-axis and that color should
+  #vary based on test location
+         geom_freqpoly() + #Specify the type of plot to be used
+  labs(color = "Test Location") #Change the title of the legend
 
 ```
 
