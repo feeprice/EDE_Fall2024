@@ -32,7 +32,7 @@ This exercise accompanies the lessons in Environmental Data Analytics on Data Ex
 
 1.  Load necessary packages (tidyverse, lubridate, here), check your current working directory and upload two datasets: the ECOTOX neonicotinoid dataset (ECOTOX_Neonicotinoids_Insects_raw.csv) and the Niwot Ridge NEON dataset for litter and woody debris (NEON_NIWO_Litter_massdata_2018-08_raw.csv). Name these datasets "Neonics" and "Litter", respectively. Be sure to include the subcommand to read strings in as factors.
 
-```{r,  message = FALSE}
+```{r,  setup, message = FALSE}
 #Load the dplyr, tidyverse, ggplot2, and here package
 library(dplyr)
 library(ggplot2)
@@ -87,7 +87,7 @@ for preserving biodiversity in ecosystems.
 
 5.  What are the dimensions of the dataset?
 
-```{r}
+```{r, neonics_dimensions}
 #Use the `dim` function to find the number of rows and columns in the dataset
 dim(neonics)
 #The dataset has 4623 rows and 30 columns.
@@ -95,7 +95,7 @@ dim(neonics)
 
 6.  Using the `summary` function on the "Effect" column, determine the most common effects that are studied. Why might these effects specifically be of interest? [Tip: The `sort()` command is useful for listing the values in order of magnitude...]
 
-```{r}
+```{r, summary_effects}
 #Use the `summary` function to look at an overview of the types of effects
 summary(neonics$Effect)
 
@@ -118,7 +118,7 @@ useful for predicting ecosystem dynamics.
 
 7.  Using the `summary` function, determine the six most commonly studied species in the dataset (common name). What do these species have in common, and why might they be of interest over other insects? Feel free to do a brief internet search for more information if needed.[TIP: Explore the help on the `summary()` function, in particular the `maxsum` argument...]
 
-```{r}
+```{r, summary_species}
 #Use the summary function to look at an overview of the common species names.
 summary(neonics$Species.Common.Name)
 
@@ -147,7 +147,7 @@ plant reproduction.
 
 8.  Concentrations are always a numeric value. What is the class of `Conc.1..Author.` column in the dataset, and why is it not numeric? [Tip: Viewing the dataframe may be helpful...]
 
-```{r}
+```{r, concentrations}
 #Use the `view` function to view the dataframe. 
 view(neonics)
 
@@ -168,35 +168,41 @@ as a factor rather than a number.
 
 9.  Using `geom_freqpoly`, generate a plot of the number of studies conducted by publication year.
 
-```{r}
+```{r, publication_year_frequency}
 ggplot(neonics, aes(Publication.Year)) + #Specify which data frame and which
   #column to use along the x-axis
-         geom_freqpoly() #Specify the type of plot to be used
+         geom_freqpoly() + #Specify the type of plot to be used
+  labs(x = "Publication Year", y = "Count") #Change axis lables
 
 ```
 
 10. Reproduce the same graph but now add a color aesthetic so that different Test.Location are displayed as different colors.
 
-```{r}
+```{r, publication_year_frequency_color}
 ggplot(neonics, aes(Publication.Year, color = Test.Location)) + #Specify which
-  #data frrame and which column to use along the x-axis and that color should
+  #data frame and which column to use along the x-axis and that color should
   #vary based on test location
          geom_freqpoly() + #Specify the type of plot to be used
-  labs(color = "Test Location") #Change the title of the legend
+  labs(x = "Publication Year", y = "Count", color = "Test Location") #Change the 
+#axis labels and legend title
 
 ```
 
 Interpret this graph. What are the most common test locations, and do they differ over time?
 
-> Answer:
+> Answer: The most common test locations are the lab and natural field. Natural
+field peaked right before 2010 and then dropped; lab peaked in about 2015 and
+then dropped drastically. Both natural field and lab were far less common before
+the 2000s.
 
 11. Create a bar graph of Endpoint counts. What are the two most common end points, and how are they defined? Consult the ECOTOX_CodeAppendix for more information. 
 
 [**TIP**: Add `theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1))` to the end of your plot command to rotate and align the X-axis labels...]
 
-```{r}
-ggplot(neonics, aes(Endpoint)) + #Our data is neonics; our x-axis is endpoint.
-  geom_bar() + #This indicates we want a bar plot.
+```{r, endpoint_counts}
+ggplot(neonics, aes(Endpoint)) + #Specify which
+  #data frame and which column to use along the x-axis.
+  geom_bar() + #Specify we want to use a bar graph.
   theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1)) #This 
 #rotates and aligns and the x-axis labels so we can see them clearly. 
 
@@ -214,22 +220,33 @@ reported statistical test (NOEAL/NOEC).
 
 12. Determine the class of collectDate. Is it a date? If not, change to a date and confirm the new class of the variable. Using the `unique` function, determine which dates litter was sampled in August 2018.
 
-```{r}
+```{r, litter_dates}
+#Use the `class` function to determine the class of collectDate.
 class(litter$collectDate)
+#The class is factor,
+
+#Change the class of collectDate to date using the `as.Date` function.
 litter$collectDate <- as.Date(litter$collectDate)
+
+#Confirm the new class of the variable.
 class(litter$collectDate)
+#The class is now date. 
+
+#Use the `unique` function to determine which dates litter were sampled in 
+#August 2018.
 unique(litter$collectDate)
+#Sampling occurred on August 2nd and August 30th.
 
 ```
 
 13. Using the `unique` function, determine how many different plots were sampled at Niwot Ridge. How is the information obtained from `unique` different from that obtained from `summary`?
 
-```{r}
-#Use unique to determine how many different plots were sampled at Niwot Ridge.
+```{r, niwot_plots}
+#Use `unique` to determine how many different plots were sampled at Niwot Ridge.
 unique(litter$namedLocation)
 #There are 12 levels, so 12 different plots were sampled.
 
-#Use summary to determine how many different plots were sampled at Niwot Ridge.
+#Use `summary` to determine how many different plots were sampled at Niwot Ridge.
 summary(litter$namedLocation)
 #This returned the sample counts at each plot.
 ```
@@ -241,22 +258,44 @@ output.
 
 14. Create a bar graph of functionalGroup counts. This shows you what type of litter is collected at the Niwot Ridge sites. Notice that litter types are fairly equally distributed across the Niwot Ridge sites.
 
-```{r}
-
+```{r, functional_group_counts}
+ggplot(litter, aes(functionalGroup)) + #Specify which
+  #data frame and which column to use along the x-axis.
+  geom_bar() + #Specify we want to use a bar graph.
+  theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1)) + #This 
+#rotates and aligns and the x-axis labels so we can see them clearly. 
+  labs(x = "Functional Group", y = "Count") #Change axis labels.
 
 ```
 
 15. Using `geom_boxplot` and `geom_violin`, create a boxplot and a violin plot of dryMass by functionalGroup.
 
-```{r}
+```{r, drymass_by_group_plots}
+#Start with boxplot:
+ggplot(litter) + #Specify which data frame to use.
+  geom_boxplot(aes(x = functionalGroup, y = dryMass)) + #Specify we want to use 
+  #a boxplot with functional group on the x-axis and dry mass on the y-axis
+  theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1)) + #This 
+#rotates and aligns and the x-axis labels so we can see them clearly. 
+  labs(x = "Functional Group", y = "Dry Mass") #Change axis labels.
 
+#Now a violin plot:
+ggplot(litter) + #Specify which data frame to use.
+  geom_violin(aes(x = functionalGroup, y = dryMass)) + #Specify we want to use 
+  #a violin plot with functional group on the x-axis and dry mass on the y-axis
+  theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1)) + #This 
+#rotates and aligns and the x-axis labels so we can see them clearly. 
+  labs(x = "Functional Group", y = "Dry Mass") #Change axis labels.
+  
 
 ```
 
 Why is the boxplot a more effective visualization option than the violin plot in this case?
 
-> Answer:
+> Answer: The violin plot displays density distributions. However, the width 
+#only changes with a continuous variable along the x-axis. Since functional 
+group is categorical, the "violin" does not have a width.
 
 What type(s) of litter tend to have the highest biomass at these sites?
 
-> Answer:
+> Answer: Needlles tend to have the highest biomass at these sites. 
