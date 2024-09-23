@@ -198,4 +198,3 @@ write.csv(NTL.phys.data.PeterPaul1, row.names = FALSE, file = "./Data/Processed/
 
 When we wrangle a raw dataset into a processed dataset, we create a code file that contains only the wrangling code. We then save the processed dataset as a new spreadsheet and then create a separate code file to analyze and visualize the dataset. Why do we keep the wrangling code separate from the analysis code?
 
-

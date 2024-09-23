@@ -16,7 +16,7 @@ editor_options:
 
 ```{r setup workspace, message = FALSE}
 getwd()
-#library(plyr)
+library(dplyr)
 library(tidyverse)
 library(lubridate)
 NTL.phys.data.PeterPaul <- read.csv("./Data/Processed/NTL-LTER_Lake_ChemistryPhysics_PeterPaul_Processed.csv")
@@ -68,6 +68,9 @@ NTL.nutrient.data.PeterPaul.subset <- select(NTL.nutrient.data.PeterPaul,
                                              lakename, year4, daynum, month, sampledate, depth:po4)
 
 # write a more succinct line of code to subset the nutrient dataset. 
+#NTL.nutrient.data.PeterPaul.subset <- select(NTL.phys.data.PeterPaul,
+                                            # lakename:po4,
+                                             #drop())
 
 ```
 
