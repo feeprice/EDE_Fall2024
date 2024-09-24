@@ -47,7 +47,9 @@ neonics <- read.csv(
 #Upload the Litter dataset
 litter <- read.csv(
   file = here("./Data/Raw/NEON_NIWO_Litter_massdata_2018-08_raw.csv"),
-  stringsAsFactors = TRUE)  
+  stringsAsFactors = TRUE)
+
+
 
 ```
 
@@ -226,12 +228,13 @@ class(litter$collectDate)
 #The class is factor.
 
 #Change the class of collectDate to date using the `as.Date` function.
-litter$collectDate <- as.Date(litter$collectDate, format = "%y-%b-%d")
+litter$collectDate <- as.Date(litter$collectDate, format = "%Y-%m-%d")
 
 #Confirm the new class of the variable.
 class(litter$collectDate)
 #The class is now date. 
 
+view(litter)
 #Use the `unique` function to determine which dates litter were sampled in 
 #August 2018.
 unique(litter$collectDate)
