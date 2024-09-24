@@ -95,7 +95,7 @@ dim(neonics)
 
 6.  Using the `summary` function on the "Effect" column, determine the most common effects that are studied. Why might these effects specifically be of interest? [Tip: The `sort()` command is useful for listing the values in order of magnitude...]
 
-```{r, summary_effects}
+```{r, summary_effects, results = 'hide'}
 #Use the `summary` function to look at an overview of the types of effects
 summary(neonics$Effect)
 
@@ -118,7 +118,7 @@ useful for predicting ecosystem dynamics.
 
 7.  Using the `summary` function, determine the six most commonly studied species in the dataset (common name). What do these species have in common, and why might they be of interest over other insects? Feel free to do a brief internet search for more information if needed.[TIP: Explore the help on the `summary()` function, in particular the `maxsum` argument...]
 
-```{r, summary_species}
+```{r, summary_species, results = 'hide'}
 #Use the summary function to look at an overview of the common species names.
 summary(neonics$Species.Common.Name)
 
@@ -223,10 +223,10 @@ reported statistical test (NOEAL/NOEC).
 ```{r, litter_dates}
 #Use the `class` function to determine the class of collectDate.
 class(litter$collectDate)
-#The class is factor,
+#The class is factor.
 
 #Change the class of collectDate to date using the `as.Date` function.
-litter$collectDate <- as.Date(litter$collectDate)
+litter$collectDate <- as.Date(litter$collectDate, format = "%y-%b-%d")
 
 #Confirm the new class of the variable.
 class(litter$collectDate)
