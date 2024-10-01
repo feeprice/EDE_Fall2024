@@ -38,7 +38,8 @@ library(here)
 #1b. Check working directory. 
 here()
 
-#1c. Read in all four raw data files associated with the EPA Air dataset, being sure to set string columns to be read in a factors. 
+#1c. Read in all four raw data files associated with the EPA Air dataset, 
+#being sure to set string columns to be read in a factors. 
 #Check to see what the four files are.
 filenames <- dir(here('Data','Raw'),pattern = ("EPAair*"))
 print(filenames)
@@ -119,33 +120,43 @@ EPAair_PM25_2019$Date <- as.Date(EPAair_PM25_2019$Date, format = "%m/%d/%Y")
 #Check the class. 
 class(EPAair_PM25_2019$Date)
 
-#4. Select the following columns: Date, DAILY_AQI_VALUE, Site.Name, AQS_PARAMETER_DESC, COUNTY, SITE_LATITUDE, SITE_LONGITUDE
+#4. Select the following columns: Date, DAILY_AQI_VALUE, Site.Name, AQS_PARAMETER_DESC, 
+#COUNTY, SITE_LATITUDE, SITE_LONGITUDE
 
 #Start with EPAair_O3_2018.
 EPAair_O3_2018_processed <- EPAair_O3_2018 %>% 
-  select(Date, DAILY_AQI_VALUE, Site.Name, AQS_PARAMETER_DESC, COUNTY, SITE_LATITUDE, SITE_LONGITUDE)
+  select(Date, DAILY_AQI_VALUE, Site.Name, AQS_PARAMETER_DESC, 
+         COUNTY, SITE_LATITUDE, SITE_LONGITUDE)
 
 #Select the columns for EPAair_O3_2019.
 EPAair_O3_2019_processed <- EPAair_O3_2019 %>% 
-  select(Date, DAILY_AQI_VALUE, Site.Name, AQS_PARAMETER_DESC, COUNTY, SITE_LATITUDE, SITE_LONGITUDE)
+  select(Date, DAILY_AQI_VALUE, Site.Name, AQS_PARAMETER_DESC, 
+         COUNTY, SITE_LATITUDE, SITE_LONGITUDE)
 
 #Select the columns for EPAair_PM25_2018.
 EPAair_PM25_2018_processed <- EPAair_PM25_2018 %>% 
-  select(Date, DAILY_AQI_VALUE, Site.Name, AQS_PARAMETER_DESC, COUNTY, SITE_LATITUDE, SITE_LONGITUDE)
+  select(Date, DAILY_AQI_VALUE, Site.Name, AQS_PARAMETER_DESC, 
+         COUNTY, SITE_LATITUDE, SITE_LONGITUDE)
 
 #Select the columns for EPAair_PM25_2019.
 EPAair_PM25_2019_processed <- EPAair_PM25_2019 %>% 
-  select(Date, DAILY_AQI_VALUE, Site.Name, AQS_PARAMETER_DESC, COUNTY, SITE_LATITUDE, SITE_LONGITUDE)
+  select(Date, DAILY_AQI_VALUE, Site.Name, AQS_PARAMETER_DESC, 
+         COUNTY, SITE_LATITUDE, SITE_LONGITUDE)
 
 
 #5. For the PM2.5 datasets, fill all cells in AQS_PARAMETER_DESC with "PM2.5".
 #Use the mutate function to do this.
-EPAair_PM25_2018_processed <- EPAair_PM25_2018_processed %>% mutate(AQS_PARAMETER_DESC = "PM2.5")
+EPAair_PM25_2018_processed <- 
+  EPAair_PM25_2018_processed %>% 
+  mutate(AQS_PARAMETER_DESC = "PM2.5")
 
-EPAair_PM25_2019_processed <- EPAair_PM25_2019_processed %>% mutate(AQS_PARAMETER_DESC = "PM2.5")
+EPAair_PM25_2019_processed <- 
+  EPAair_PM25_2019_processed %>% 
+  mutate(AQS_PARAMETER_DESC = "PM2.5")
 
 
-#6. Save all four processed datasets in the Processed folder. Use the same file names as the raw files but replace "raw" with "processed".
+#6. Save all four processed datasets in the Processed folder. Use the same file names as 
+#the raw files but replace "raw" with "processed".
 #Save the EPAair_O3_2018_processed file.
 write.csv(
   EPAair_O3_2018_processed,

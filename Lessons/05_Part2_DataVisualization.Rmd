@@ -19,12 +19,12 @@ library(tidyverse); library(lubridate); library(here);
 here()
 
 PeterPaul.chem.nutrients <- 
-  read.csv(here("Data/Processed_KEY/NTL-LTER_Lake_Chemistry_Nutrients_PeterPaul_Processed.csv"),
+  read.csv(here("Data/Processed/NTL-LTER_Lake_Chemistry_Nutrients_PeterPaul_Processed.csv"),
            stringsAsFactors = T)
 PeterPaul.chem.nutrients.gathered <-
-  read.csv(here("Data/Processed_KEY/NTL-LTER_Lake_Nutrients_PeterPaulGathered_Processed.csv"),
+  read.csv(here("Data/Processed/NTL-LTER_Lake_Nutrients_PeterPaulGathered_Processed.csv"),
            stringsAsFactors = T)
-EPAair <- read.csv(here("Data/Processed_KEY/EPAair_O3_PM25_NC1819_Processed.csv"),
+EPAair <- read.csv(here("Data/Processed/EPAair_O3_PM25_NC1819_Processed.csv"),
                    stringsAsFactors = T)
 
 EPAair$Date <- ymd(EPAair$Date)
@@ -234,7 +234,8 @@ The following graph displays the counts of specific endpoints measured in neonic
 ```{r}
 Neonics <- read.csv("./Data/Raw/ECOTOX_Neonicotinoids_Insects_raw.csv")
 ggplot(Neonics) +
-  geom_bar(aes(x = Endpoint))
+  geom_bar(aes(x = reorder(Endpoint, Endpoint, FUN = length))) +
+  scale_x_discrete(limits = rev(levels(Neonics$Endpoint)))
 
 
 
