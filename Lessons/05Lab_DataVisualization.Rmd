@@ -71,7 +71,7 @@ ggsave(
 
 ```{r, message = FALSE, warning = FALSE}
 #Assign a variable to the processed data folder location
-processed_data = "./Data/Processed_KEY"
+processed_data = "./Data/Processed"
 
 #Read in data
 PeterPaul.chem.nutrients <- read.csv(
@@ -93,25 +93,35 @@ Say we want to plot the number of records each month in the Peter/Paul lakes dat
 
 ```{r Plot the number of records by month}
 #What kind of values are months?
-
+class(PeterPaul.chem.nutrients$month)
 
 #List unique values
+unique(PeterPaul.chem.nutrients$month)
 
 
 #Plot how many Lake observations occur each month
+PeterPaul.chem.nutrients %>% 
+  ggplot() +
+  geom_bar(aes(x = month))
 
 
 #Convert month to a factor -- with 12 levels, labelled with month names
-
+PeterPaul.chem.nutrients$month <- factor(PeterPaul.chem.nutrients$month, 
+       levels = 1:12,
+       labels = month.abb)
 
 #Try again: Plot how many Lake observations occur each month
-
+PeterPaul.chem.nutrients %>% 
+  ggplot() +
+  geom_bar(aes(x = month))
 
 #Alter to include missing months
-
+PeterPaul.chem.nutrients %>% 
+  ggplot() +
+  geom_bar(aes(x = month)) +
+  scale_x_discrete(drop = F)
 
 #Tidy up the code
-
 
 ```
 
@@ -232,12 +242,32 @@ Exercise: build your own scatterplots of PeterPaul.chem.nutrients
 ```{r, fig.height = 3, fig.width = 4, warning = FALSE}
 
 # 1. 
+
+scatterplot <-
+  ggplot(PeterPaul.chem.nutrients, aes(x = daynum, y = temperature_C, color = year4)) +
+  geom_point() +
+  facet_wrap(vars(lakename), nrow = 2) +
+  labs(y = "Temperature (C)")
+
+show(scatterplot)
+
 # Plot surface temperatures by day of  year. 
 # Color your points by year, and facet by lake in two rows.
 # Change the ylab name
 
 
 #2. 
+scatterplot2 <-
+  ggplot(PeterPaul.chem.nutrients, aes(x = sampledate, y = temperature_C, color = depth)) +
+  geom_point(size = 0.5) +
+  facet_wrap(vars(lakename), nrow = 2) +
+  labs(y = "Temperature (C)") +
+  scale_color_viridis(option = "magma", direction = -1) +
+  scale_x_date(limits = as.Date(c("1984-05-27", "2016-08-16")), 
+    date_breaks = "5 years", date_labels = "%Y")
+  
+
+show(scatterplot2)
 # Plot temperature by date. Color your points by depth.
 # Change the size of your point to 0.5
 # Change the color palette to magma and play with direction (+- 1), which one makes more sense?
@@ -253,6 +283,13 @@ Exercise: Plot relationships between air quality measurements
 ```{r, fig.height = 3, fig.width = 4, warning = FALSE}
 
 # 3. 
+
+scatterplot3 <-
+  ggplot(EPAair, aes(x = Ozone, y = PM2.5, color = meanLat)) +
+  geom_point(alpha = 0.5) +
+  geom_smooth(method = lm)
+
+show(scatterplot3)
 # Plot AQI values for ozone by PM2.5, colored by latitude 
 # Make the points 50 % transparent
 # Add a line of best fit for the linear regression of these variables.
@@ -269,6 +306,8 @@ Exercise: Plot distributions of AQI values for EPAair.
 ```{r, fig.height = 3, fig.width = 4, warning = FALSE}
 
 # 4. 
+
+
 # Create several types of plots depicting PM2.5, divided by year. 
 # Choose which plot displays the data best and justify your choice. 
 
