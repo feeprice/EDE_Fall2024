@@ -260,11 +260,9 @@ show(scatterplot)
 scatterplot2 <-
   ggplot(PeterPaul.chem.nutrients, aes(x = sampledate, y = temperature_C, color = depth)) +
   geom_point(size = 0.5) +
-  facet_wrap(vars(lakename), nrow = 2) +
   labs(y = "Temperature (C)") +
-  scale_color_viridis(option = "magma", direction = -1) +
-  scale_x_date(limits = as.Date(c("1984-05-27", "2016-08-16")), 
-    date_breaks = "5 years", date_labels = "%Y")
+  scale_color_viridis(option = "magma", direction = +1) +
+  scale_x_date(date_breaks = "5 years", date_labels = "%Y")
   
 
 show(scatterplot2)
@@ -285,7 +283,7 @@ Exercise: Plot relationships between air quality measurements
 # 3. 
 
 scatterplot3 <-
-  ggplot(EPAair, aes(x = Ozone, y = PM2.5, color = meanLat)) +
+  ggplot(EPAair, aes(x = PM2.5, y = Ozone, color = meanLat)) +
   geom_point(alpha = 0.5) +
   geom_smooth(method = lm)
 
