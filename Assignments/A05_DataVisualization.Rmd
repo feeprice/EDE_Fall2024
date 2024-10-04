@@ -1,6 +1,6 @@
 ---
 title: "Assignment 5: Data Visualization"
-author: "Student Name"
+author: "Fiona Price"
 date: "Fall 2024"
 output: pdf_document
 geometry: margin=2.54cm
@@ -31,9 +31,40 @@ This exercise accompanies the lessons in Environmental Data Analytics on Data Vi
 2. Make sure R is reading dates as date format; if not change the format to date.
 
 ```{r initialize project}
-#1 
+#1 Load in required packages and verify home directory.
+library(tidyverse)
+library(lubridate)
+library(here)
+library(cowplot)
+getwd()
+here()
 
-#2 
+#Read in the NTL-LTER processed data files for nutrients and chemistry/physics 
+#for Peter and Paul Lakes
+
+PeterPaul_processed <- read.csv(
+  here("Data/Processed/NTL-LTER_Lake_Chemistry_Nutrients_PeterPaul_Processed.csv"),
+  stringsAsFactors = TRUE)
+
+Neonics_processed <- read.csv(
+  here("Data/Processed/NEON_NIWO_Litter_mass_trap_Processed.csv"),
+  stringsAsFactors = TRUE)
+
+
+#2 Make syre R is reading the dates as date format.
+#Start with PeterPaul data.
+class(PeterPaul_processed$sampledate)
+#Reading it as a factor; change to data
+PeterPaul_processed$sampledate <- as.Date(PeterPaul_processed$sampledate,
+                                         format = "%Y-%m-%d")
+class(Neonics_processed$collectDate)
+
+#Now for Neonics data.
+class(Neonics_processed$collectDate)
+#Reading it as a factor; change to data
+Neonics_processed$collectDate <- as.Date(Neonics_processed$collectDate,
+                                         format = "%Y-%m-%d")
+class(Neonics_processed$collectDate)
 
 ```
 ## Define your theme
@@ -45,8 +76,19 @@ This exercise accompanies the lessons in Environmental Data Analytics on Data Vi
  * Legend
 
 ```{r build plot theme}
-#3
-
+#3. Create my own theme
+library(ggthemes)
+library(hrbrthemes)
+library(viridis)
+library(RColorBrewer)
+my_theme <- theme_ipsum() + 
+  theme(
+    legend.position = "right",
+    legend.text = element_text(size = 10),
+    legend.title = element_text(size = 10),
+    legend.direction = "vertical",
+    plot.title = element_text(color = "Grey",)
+  ) 
 ```
 
 ## Create graphs
@@ -55,7 +97,19 @@ For numbers 4-7, create ggplot graphs and adjust aesthetics to follow best pract
 4. [NTL-LTER] Plot total phosphorus (`tp_ug`) by phosphate (`po4`), with separate aesthetics for Peter and Paul lakes. Add line(s) of best fit using the `lm` method. Adjust your axes to hide extreme values (hint: change the limits using `xlim()` and/or `ylim()`).
 
 ```{r plot total P vs PO4}
-#4 
+#4. Plot total phosphorus by phosphate with separate aesthetics for Peter and
+#Paul lakes.
+
+P_vs_P04 <- 
+  ggplot(PeterPaul_processed, aes(x = po4, y = tp_ug, color = lakename)) +
+  geom_point() +
+  geom_smooth(method = lm) +
+  my_theme +
+  xlim(-1, 50) +
+  labs(title = "My Plot") +
+  scale_color_brewer(palette = "Set1")
+
+show(P_vs_P04)
 
 ```
 
