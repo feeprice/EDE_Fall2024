@@ -46,7 +46,7 @@ PeterPaul_processed <- read.csv(
   here("Data/Processed/NTL-LTER_Lake_Chemistry_Nutrients_PeterPaul_Processed.csv"),
   stringsAsFactors = TRUE)
 
-Neonics_processed <- read.csv(
+NeonNiwo_processed <- read.csv(
   here("Data/Processed/NEON_NIWO_Litter_mass_trap_Processed.csv"),
   stringsAsFactors = TRUE)
 
@@ -57,14 +57,14 @@ class(PeterPaul_processed$sampledate)
 #Reading it as a factor; change to data
 PeterPaul_processed$sampledate <- as.Date(PeterPaul_processed$sampledate,
                                          format = "%Y-%m-%d")
-class(Neonics_processed$collectDate)
+class(PeterPaul_processed$collectDate)
 
 #Now for Neonics data.
-class(Neonics_processed$collectDate)
+class(NeonNiwo_processed$collectDate)
 #Reading it as a factor; change to data
-Neonics_processed$collectDate <- as.Date(Neonics_processed$collectDate,
+NeonNiwo_processed$collectDate <- as.Date(NeonNiwo_processed$collectDate,
                                          format = "%Y-%m-%d")
-class(Neonics_processed$collectDate)
+class(NeonNiwo_processed$collectDate)
 
 ```
 ## Define your theme
@@ -87,7 +87,8 @@ my_theme <- theme_ipsum() +
     legend.text = element_text(size = 10),
     legend.title = element_text(size = 10),
     legend.direction = "vertical",
-    plot.title = element_text(color = "Grey",)
+    plot.title = element_text(color = "Grey"),
+    axis.text.x = element_text(angle = 45, hjust = 1, size = 8)
   ) 
 ```
 
@@ -102,12 +103,14 @@ For numbers 4-7, create ggplot graphs and adjust aesthetics to follow best pract
 
 P_vs_P04 <- 
   ggplot(PeterPaul_processed, aes(x = po4, y = tp_ug, color = lakename)) +
-  geom_point() +
-  geom_smooth(method = lm) +
-  my_theme +
-  xlim(-1, 50) +
-  labs(title = "My Plot") +
-  scale_color_brewer(palette = "Set1")
+  geom_point() + #indicate scatter plot
+  geom_smooth(method = lm) + #add line of best fit
+  my_theme + #add my theme created in step 3
+  xlim(-1, 50) + #hide extreme values
+  labs(title = "Total Phosphorus by Phosphate\nfor Peter and Paul Lakes",
+       x = "Phosphate",
+       y = "Total Phosphorus") + #change titles
+  scale_color_brewer(palette = "Set1") #changes color pallete
 
 show(P_vs_P04)
 
@@ -123,7 +126,87 @@ Tips:
 * Individual plots can have different sizes when combined using `cowplot`.
 
 ```{r Create boxplots}
-#5 
+#5. Create a boxplot of temperature with month as the x-axis and lake as a 
+#color aesthetic.
+#Convert month to a factor -- with 12 levels, labelled with month names
+PeterPaul_processed$month <- factor(PeterPaul_processed$month, 
+       levels = 1:12,
+       labels = month.abb)
+
+temp_box <- ggplot(PeterPaul_processed, aes(x = month, y = temperature_C, 
+                                            color = lakename)) +
+  geom_boxplot() + #specify box plot
+  scale_x_discrete(drop = F) + #include all months
+  my_theme + #add my theme
+  labs(title = "Temperature by Month\nfor Peter and Paul Lakes",
+       x = "Month",
+       y = "Temperature (C)",
+       color = "Lake") #add titles
+
+show(temp_box)
+
+#Create a boxplot of TP with month as the x-axis and lake as a 
+#color aesthetic.
+TP_box <- ggplot(PeterPaul_processed, aes(x = month, y = tp_ug, 
+                                            color = lakename)) +
+  geom_boxplot() + #specify box plot
+  scale_x_discrete(drop = F) + #include all months
+  my_theme + #add my theme
+  labs(title = "TP by Month\nfor Peter and Paul Lakes",
+       x = "Month",
+       y = "TP",
+       color = "Lake") #add titles
+
+show(TP_box)
+
+#Create a boxplot of TN with month as the x-axis and lake as a 
+#color aesthetic.
+TN_box <- ggplot(PeterPaul_processed, aes(x = month, y = tn_ug, 
+                                            color = lakename)) +
+  geom_boxplot() + #specify boxplot
+  scale_x_discrete(drop = F) + #include all months
+  my_theme + #add my theme
+  labs(title = "TN by Month\nfor Peter and Paul Lakes",
+       x = "Month",
+       y = "TN",
+       color = "Lake") #add titles
+show(TN_box)
+
+#Create a cowplot
+
+temp_box_clean <- temp_box +
+  labs(title = NULL, x = NULL, y = NULL) +
+  theme(legend.position = "none") +
+  theme(axis.text.x = element_blank()) +
+  theme(axis.text.y = element_blank()) +
+  theme(plot.margin = unit(c(2, 0, 0, 0), "cm"))
+
+TP_box_clean <- TP_box +
+  labs(title = NULL, x = NULL, y = NULL) +
+  theme(legend.position = "none") +
+  theme(axis.text.x = element_blank()) +
+  theme(axis.text.y = element_blank()) +
+  theme(plot.margin = unit(c(2, 0, 0, 0), "cm"))
+
+TN_box_clean <- TN_box +
+  labs(title = NULL, x = NULL, y = NULL) +
+  theme(legend.position = "none") +
+  theme(axis.text.x = element_blank()) +
+  theme(axis.text.y = element_blank()) +
+  theme(plot.margin = unit(c(2, 0, 0, 0), "cm"))
+  
+library(cowplot)
+combined_plot <- plot_grid(temp_box_clean,
+          TP_box_clean, TN_box_clean, 
+          nrow = 1, align = 'h', rel_heights = c(1,1,1)) +
+  draw_label("Combined Plot Title", 
+             size = 12, 
+             x = 0.5, y = 0.9, hjust = 0.5)
+
+
+
+show(combined_plot)
+
 
 ```
 
@@ -136,13 +219,36 @@ Question: What do you observe about the variables of interest over seasons and b
 7. [Niwot Ridge] Now, plot the same plot but with NLCD classes separated into three facets rather than separated by color. 
 
 ```{r Plot litter}
-#6
+#6. Plot a subset of the litter dataset by displaying only the "Needles" 
+#functional group. Plot the dry mass of needle litter by date and separate 
+#by NLCD class with a color aesthetic. 
+
+ggplot(subset(NeonNiwo_processed, 
+              functionalGroup == "Needles")) + #subset Needles
+  geom_point(aes(x = collectDate, y = dryMass, color = nlcdClass)) + #specify
+  #scatter plot, data, and separate by NLCD class
+  labs(title = "Dry Mass of Needles\nby Collection Date",
+       x = "Collection Date",
+       y = "Dry Mass (g)",
+       color = "NLCD Class") + #add titles
+  my_theme #add my theme 
 
 
-#7
+
+#7. Now, plot the same plot but with NLCD classes separated into three facets rather than separated by color. 
+ggplot(subset(NeonNiwo_processed, 
+              functionalGroup == "Needles")) + #subse Needles
+  geom_point(aes(x = collectDate, y = dryMass)) + #specify
+  #scatter plot and data used
+  facet_wrap(vars(nlcdClass), nrow = 1) + #separate NLCD classes into 3 
+  #different facets
+  labs(title = "Dry Mass of Needles\nby Collection Date",
+       x = "Collection Date",
+       y = "Dry Mass (g)") + #add titles
+  my_theme #add my theme
 
 
 ```
 Question: Which of these plots (6 vs. 7) do you think is more effective, and why? 
 
-> Answer:
+> Answer: I think plot 7 is more effective, because it's easier for me to see the data for each site. In plot 6, many of the data points are clustered together, making it difficult to identify which collection belongs to which site. While 7 has the drawback of having to look at 3 different graphs rather than just 1, I think it is ultimately easier to distinguish the data points and see each individual collection event. Additionally, it is easier for colorblind people (although color palettes can be selected to ensure ADA compliance).
