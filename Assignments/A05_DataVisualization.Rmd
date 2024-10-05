@@ -175,25 +175,22 @@ show(TN_box)
 #Create a cowplot
 
 temp_box_clean <- temp_box +
-  labs(title = NULL, x = NULL, y = NULL) +
+  labs(title = NULL, x = NULL) +
   theme(legend.position = "none") +
-  theme(axis.text.x = element_blank()) +
-  theme(axis.text.y = element_blank()) +
-  theme(plot.margin = unit(c(2, 0, 0, 0), "cm"))
+  theme(plot.margin = unit(c(1, 0, 0, 0), "cm")) +
+  theme(axis.text.y = element_text(size = 8))
 
 TP_box_clean <- TP_box +
-  labs(title = NULL, x = NULL, y = NULL) +
+  labs(title = NULL, x = NULL) +
   theme(legend.position = "none") +
-  theme(axis.text.x = element_blank()) +
-  theme(axis.text.y = element_blank()) +
-  theme(plot.margin = unit(c(2, 0, 0, 0), "cm"))
+  theme(plot.margin = unit(c(1, 0, 0, 0), "cm")) +
+  theme(axis.text.y = element_text(size = 8))
 
 TN_box_clean <- TN_box +
-  labs(title = NULL, x = NULL, y = NULL) +
+  labs(title = NULL, x = NULL) +
   theme(legend.position = "none") +
-  theme(axis.text.x = element_blank()) +
-  theme(axis.text.y = element_blank()) +
-  theme(plot.margin = unit(c(2, 0, 0, 0), "cm"))
+  theme(plot.margin = unit(c(1, 0, 0, 0), "cm")) +
+  theme(axis.text.y = element_text(size = 8))
   
 library(cowplot)
 combined_plot <- plot_grid(temp_box_clean,
@@ -201,8 +198,7 @@ combined_plot <- plot_grid(temp_box_clean,
           nrow = 1, align = 'h', rel_heights = c(1,1,1)) +
   draw_label("Combined Plot Title", 
              size = 12, 
-             x = 0.5, y = 0.9, hjust = 0.5)
-
+             x = 0.5, y = 0.5, hjust = 0.5)
 
 
 show(combined_plot)
@@ -232,8 +228,6 @@ ggplot(subset(NeonNiwo_processed,
        y = "Dry Mass (g)",
        color = "NLCD Class") + #add titles
   my_theme #add my theme 
-
-
 
 #7. Now, plot the same plot but with NLCD classes separated into three facets rather than separated by color. 
 ggplot(subset(NeonNiwo_processed, 
