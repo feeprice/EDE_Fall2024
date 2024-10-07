@@ -81,7 +81,7 @@ library(ggthemes)
 library(hrbrthemes)
 library(viridis)
 library(RColorBrewer)
-my_theme <- theme_ipsum() + 
+my_theme <- theme_bw() + 
   theme(
     legend.position = "right",
     legend.text = element_text(size = 10),
@@ -107,7 +107,7 @@ P_vs_P04 <-
   geom_smooth(method = lm) + #add line of best fit
   my_theme + #add my theme created in step 3
   xlim(-1, 50) + #hide extreme values
-  labs(title = "Total Phosphorus by Phosphate\nfor Peter and Paul Lakes",
+  labs(title = "Total Phosphorus by Phosphate for Peter and Paul Lakes",
        x = "Phosphate",
        y = "Total Phosphorus") #change titles
 
@@ -137,7 +137,7 @@ temp_box <- ggplot(PeterPaul_processed, aes(x = month, y = temperature_C,
   geom_boxplot() + #specify box plot
   scale_x_discrete(drop = F) + #include all months
   my_theme + #add my theme
-  labs(title = "Temperature by Month\nfor Peter and Paul Lakes",
+  labs(title = "Temperature by Month for Peter and Paul Lakes",
        x = "Month",
        y = "Temperature (C)",
        color = "Lake") #add titles
@@ -151,7 +151,7 @@ TP_box <- ggplot(PeterPaul_processed, aes(x = month, y = tp_ug,
   geom_boxplot() + #specify box plot
   scale_x_discrete(drop = F) + #include all months
   my_theme + #add my theme
-  labs(title = "Total Phosphorus by Month\nfor Peter and Paul Lakes",
+  labs(title = "Total Phosphorus by Month for Peter and Paul Lakes",
        x = "Month",
        y = "Total Phosphorus (µg)",
        color = "Lake") #add titles
@@ -165,7 +165,7 @@ TN_box <- ggplot(PeterPaul_processed, aes(x = month, y = tn_ug,
   geom_boxplot() + #specify boxplot
   scale_x_discrete(drop = F) + #include all months
   my_theme + #add my theme
-  labs(title = "Total Nitrogen by Month\nfor Peter and Paul Lakes",
+  labs(title = "Total Nitrogen by Month for Peter and Paul Lakes",
        x = "Month",
        y = "Total Nitrogen (µg)",
        color = "Lake") #add titles
@@ -205,8 +205,8 @@ TN_box_clean <- TN_box +
 
 #Create a legend for the cowplot and adjust sizes.
 legend <- get_legend(TN_box_clean + theme(legend.position = "right",
-                                        legend.title = element_text(size = 10), 
-                                        legend.text = element_text(size = 8),))
+                                        legend.title = element_text(size = 8), 
+                                        legend.text = element_text(size = 6),))
 #Create a cowplot. 
 library(cowplot)
 combined_plot <- plot_grid(temp_box_clean,
@@ -245,7 +245,7 @@ ggplot(subset(NeonNiwo_processed,
               functionalGroup == "Needles")) + #subset Needles
   geom_point(aes(x = collectDate, y = dryMass, color = nlcdClass)) + #specify
   #scatter plot, data, and separate by NLCD class
-  labs(title = "Dry Mass of Needles\nby Collection Date",
+  labs(title = "Dry Mass of Needles by Collection Date",
        x = "Collection Date",
        y = "Dry Mass (g)",
        color = "NLCD Class") + #add titles
@@ -258,7 +258,7 @@ ggplot(subset(NeonNiwo_processed,
   #scatter plot and data used
   facet_wrap(vars(nlcdClass), nrow = 1) + #separate NLCD classes into 3 
   #different facets
-  labs(title = "Dry Mass of Needles\nby Collection Date",
+  labs(title = "Dry Mass of Needles by Collection Date",
        x = "Collection Date",
        y = "Dry Mass (g)") + #add titles
   my_theme #add my theme
