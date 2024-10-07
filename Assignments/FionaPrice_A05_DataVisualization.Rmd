@@ -87,7 +87,7 @@ my_theme <- theme_ipsum() +
     legend.text = element_text(size = 10),
     legend.title = element_text(size = 10),
     legend.direction = "vertical",
-    plot.title = element_text(color = "Grey"),
+    plot.title = element_text(color = "#008B8B"),
     axis.text.x = element_text(angle = 45, hjust = 1, size = 8)
   ) 
 ```
@@ -109,8 +109,7 @@ P_vs_P04 <-
   xlim(-1, 50) + #hide extreme values
   labs(title = "Total Phosphorus by Phosphate\nfor Peter and Paul Lakes",
        x = "Phosphate",
-       y = "Total Phosphorus") + #change titles
-  scale_color_brewer(palette = "Set1") #changes color pallete
+       y = "Total Phosphorus") #change titles
 
 show(P_vs_P04)
 
@@ -215,10 +214,10 @@ combined_plot <- plot_grid(temp_box_clean,
           nrow = 1, align = 'h', rel_widths = c(1,1,1,0.5)) +
   draw_label("Temperature, TP, and TN by Month for Peter and Paul Lakes", 
              size = 12, 
-             x = 0.5, y = 0.95, hjust = 0.5) +
+             x = 0.5, y = 0.95, hjust = 0.5, color = "#008B8B") +
   draw_label ("Month",
               size = 10,
-              x = 0.5, y = 0.05, hjust = 0.5) 
+              x = 0.5, y = 0.05, hjust = 0.5)
 show(combined_plot)
 
 
