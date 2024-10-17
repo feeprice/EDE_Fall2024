@@ -32,13 +32,14 @@ Using markdown, create a 2-column table beneath the `Table: EPA Air Quality` lin
 
 -   The first column should have the header `Item`, below which are three rows listing these metadata attribute item names: `Filename`, `Date`, and `Source`.
 
--   The second column should have the header `Value` and include the metadata values:  `EPAair_O3_PM25_NC1819_Processed.csv`,   `2018-2019`, and   `EPA Air Quality System (AQS)`.
+-   The second column should have the header `Value` and include the metadata values:   
+`EPAair_O3_PM25_NC1819_Processed.csv`, `2018-2019`, and `EPA Air Quality System (AQS)`.
 
 -   The first column should be aligned to the right and the second to the left.
 
-## Table: EPA Air Quality
+:EPA Air Quality
 
-|     Item | Value                               |
+|Item Name | Value                               |
 |---------:|:------------------------------------|
 | Filename | EPAair_O3_PM25_NC1819_Processed.csv |
 |     Data | 2018-2019                           |
@@ -114,7 +115,7 @@ kable(summary_Ozone, col.names = c("County","$\\mu g/m^3$"),
 
 Below this paragraph, but above the horizonal line (`---`), create two separate code chunks that create boxplots of the distribution of Ozone levels by month using, one for only records collected in 2018 and one for records in 2019. Customize the chunk options such that the final figures are displayed but not the code used to generate the figures. In addition, align the plots on the left side of the page and set the figure heights so both plots fit on the same page with minimal space remaining. Lastly, add a `fig.cap` chunk option to add a caption (title) to your plot that will display underneath the figure.
 
-```{r 2018 boxplot, echo=FALSE, fig.align="left", fig.cap="Ozone Levels by Month for 2018"}
+```{r 2018 boxplot, echo=FALSE, fig.align="left", fig.cap="2018 Monthly Ozone Levels", fig.width = 7, fig.height = 4}
 #Change the EPA Month data to a factor and use Month names. 
 epa_data$month <- factor(epa_data$month, 
        levels = 1:12,
@@ -129,7 +130,7 @@ ggplot(Ozone_2018, aes(x = month, y = Ozone)) +
   geom_boxplot()
 ```
 
-```{r boxplots, echo=FALSE, fig.align="left", fig.cap="Ozone Levels by Month for 2019"}
+```{r boxplots, echo=FALSE, fig.align="left", fig.cap="2019 Monthly Ozone Levels", fig.width = 7, fig.height = 4}
 #Filter data by 2019. 
 Ozone_2019 <- filter(epa_data, year == 2019) %>% 
   drop_na(Ozone)
