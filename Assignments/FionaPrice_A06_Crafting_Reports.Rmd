@@ -128,7 +128,9 @@ Ozone_2018 <- filter(epa_data, year == 2018) %>%
 
 #Create boxplot for 2018 data.
 ggplot(Ozone_2018, aes(x = month, y = Ozone)) +
-  geom_boxplot()
+  geom_boxplot() +
+  labs(x = "Month",
+       y = expression(paste("Concentration ", mu, g/m^{3})))
 ```
 
 ```{r boxplots, echo=FALSE, fig.align="left", fig.cap="2019 Monthly Ozone Levels", fig.width = 7, fig.height = 4}
@@ -138,7 +140,9 @@ Ozone_2019 <- filter(epa_data, year == 2019) %>%
 
 #Create boxplot for 2019 data.
 ggplot(Ozone_2019, aes(x = month, y = Ozone)) +
-  geom_boxplot()
+  geom_boxplot() +
+  labs(x = "Month",
+       y = expression(paste("Concentration ", mu, g/m^{3})))
 
 ```
 
