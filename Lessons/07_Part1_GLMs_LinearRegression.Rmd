@@ -44,7 +44,7 @@ options(scipen = 4)
 library(here)
 here()
 
-PeterPaul.chem.nutrients <- read.csv(here("Data/Processed_KEY/NTL-LTER_Lake_Chemistry_Nutrients_PeterPaul_Processed.csv"), stringsAsFactors = TRUE)
+PeterPaul.chem.nutrients <- read.csv(here("Data/Processed/NTL-LTER_Lake_Chemistry_Nutrients_PeterPaul_Processed.csv"), stringsAsFactors = TRUE)
 
 # Set theme
 mytheme <- theme_classic(base_size = 14) +
@@ -88,7 +88,9 @@ cor.test(PeterPaul.chem.nutrients$irradianceWater, PeterPaul.chem.nutrients$dept
 ```
 Question: How would you report the results of this test (overall findings and report of statistical output)?
 
->  
+>  R squared value: depth explains about 30% variance of statistics. P-value suggests
+statistically significant results; we can explain irradiance by depth. 
+There is a significant negative correlation between irradiance and depth.
 
 So, we see there is a significant negative correlation between irradiance and depth (lower light levels at greater depths), and that this model explains about 31 % of the total variance in irradiance. Let's visualize this relationship and the model itself. 
 
@@ -126,6 +128,7 @@ PeterPaul.chem.nutrients <- filter(PeterPaul.chem.nutrients,
                                    irradianceWater != 0 & irradianceWater < 5000)
 irradiance.regression2 <- lm(data = PeterPaul.chem.nutrients, log(irradianceWater) ~ depth)
 summary(irradiance.regression2)
+#This reduced residual standard error and increased R-squared
 
 par(mfrow = c(2,2), mar=c(4,4,4,4))
 plot(irradiance.regression2)
@@ -146,6 +149,7 @@ irradiancebydepth2 <-
     scale_y_log10() +  #log transformed values for irradianceWater
     geom_smooth(method = 'lm', se = FALSE, color = "black")
 print(irradiancebydepth2)
+#se = FALSE gets rid of confidence intervals
 
 # Make the graph attractive
 
@@ -168,14 +172,14 @@ print(TPplot)
 par(mfrow = c(2,2), mar=c(4,4,4,4))
 plot(TPregression)
 par(mfrow = c(1,1))
-
+#Clear from R squared that there's something else causing variability of total
+#phosphoral concentration, so make a correlation matrix
 ```
 
 ## Correlation Plots
 We can also make exploratory plots of several continuous data points to determine possible relationships, as well as covariance among explanatory variables. 
 
 ```{r, fig.height = 3, fig.width = 4}
-#install.packages("corrplot")
 library(corrplot)
 PeterPaulnutrients <- 
   PeterPaul.chem.nutrients %>%
@@ -183,7 +187,9 @@ PeterPaulnutrients <-
   na.omit()
 PeterPaulCorr <- cor(PeterPaulnutrients)
 corrplot(PeterPaulCorr, method = "ellipse")
+#dark red = strong negative correlation, dark blue = strong positive 
 corrplot.mixed(PeterPaulCorr, upper = "ellipse")
+#prints upper diagonal only 
 ```
 
 ## AIC to select variables
@@ -204,5 +210,7 @@ TPAIC <- lm(data = Paul.naomit, tp_ug ~ depth + dissolvedOxygen +
 step(TPAIC)
 TPmodel <- lm(data = Paul.naomit, tp_ug ~ dissolvedOxygen + temperature_C + tn_ug)
 summary(TPmodel)
+#Removes variable step by step 
+#best regression considers oxygen, temp, and nitrogen
 
 ```
