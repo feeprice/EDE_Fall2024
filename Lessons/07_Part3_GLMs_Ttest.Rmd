@@ -49,7 +49,7 @@ Are Ozone levels below the threshold for "good" AQI index (0-50)?
 ### Import data set
 
 ```{r, message = FALSE}
-EPAair <- read.csv(here("Data/Processed_KEY/EPAair_O3_PM25_NC1819_Processed.csv"), stringsAsFactors = TRUE)
+EPAair <- read.csv(here("Data/Processed/EPAair_O3_PM25_NC1819_Processed.csv"), stringsAsFactors = TRUE)
 # Set date to date format
 EPAair$Date <- as.Date(EPAair$Date, format = "%Y-%m-%d")
 
@@ -94,17 +94,17 @@ Are Ozone levels different between 2018 and 2019?
 
 ```{r}
 #First let's look at the data
-ggplot(EPAair, aes(x = Ozone, color = as.factor(Year))) +
+ggplot(EPAair, aes(x = Ozone, color = as.factor(year))) +
   geom_freqpoly()
 
 #Format as a t-test
 #EPAair$Ozone will be our continuous dependent variable
 #EPAair$Year will be our categorical variable with two levels (2018 and 2019)
-O3.twosample <- t.test(EPAair$Ozone ~ EPAair$Year)
+O3.twosample <- t.test(EPAair$Ozone ~ EPAair$year)
 O3.twosample
 
 # Format as a GLM
-O3.twosample2 <- lm(EPAair$Ozone ~ EPAair$Year)
+O3.twosample2 <- lm(EPAair$Ozone ~ EPAair$year)
 summary(O3.twosample2)
 
 ```

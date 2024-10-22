@@ -12,16 +12,21 @@ editor_options:
 1. Apply special cases of the GLM (ANOVA) to real datasets
 2. Interpret and report the results of ANOVA in publication-style formats
 
+ANOVA: analysis of variance.
+Assumptions: 
+1. All pops normally distributed
+2. Pop variances are equal
+3. Observations are independent
+
 ## Set up
 ```{r, message = FALSE}
 
 library(tidyverse)
-#install.packages("agricolae")
 library(agricolae)   #you may need to install/update package "htmltools" before installing and loading agricolae
 library(here)
 here()
 
-Litter <- read.csv(here("Data/Processed_KEY/NEON_NIWO_Litter_mass_trap_Processed.csv"), stringsAsFactors = TRUE)
+Litter <- read.csv(here("Data/Processed/NEON_NIWO_Litter_mass_trap_Processed.csv"), stringsAsFactors = TRUE)
 
 # Set date to date format
 Litter$collectDate <- as.Date(Litter$collectDate , format = "%Y-%m-%d")
@@ -65,9 +70,11 @@ shapiro.test(Litter.Totals$dryMass[Litter.Totals$plotID == "NIWO_063"])
 shapiro.test(Litter.Totals$dryMass[Litter.Totals$plotID == "NIWO_064"])
 shapiro.test(Litter.Totals$dryMass[Litter.Totals$plotID == "NIWO_067"])
 
-#results: reject null in all except two: NIWO_057 and NIWO_046
+#results: reject null in all except two: NIWO_057 and NIWO_046. we reject null
+#because p-value is significant. 
 #but method is robust from small deviations from normal distribution
 qqnorm(Litter.Totals$dryMass); qqline(Litter.Totals$dryMass)
+#Data clearly does not follow normal distribution
 
 # Test for equal variance
 # ANOVA is robust against departures from equal variance.
@@ -78,6 +85,7 @@ bartlett.test(Litter.Totals$dryMass ~ Litter.Totals$plotID)
 
 # Format ANOVA as aov
 Litter.Totals.anova <- aov(data = Litter.Totals, dryMass ~ plotID)
+#specify df, continuous variable, and categorical variable
 summary(Litter.Totals.anova)
 
 #results: reject null hypothesis i.e. difference between a pair of group means is statistically significant
@@ -92,10 +100,13 @@ plot(Litter.Totals.anova2)
 
 # Post-hoc test
 # TukeyHSD() computes Tukey Honest Significant Differences
+#compares all possible group pairings
 TukeyHSD(Litter.Totals.anova)
 
 # Extract groupings for pairwise relationships
 Litter.Totals.groups <- HSD.test(Litter.Totals.anova, "plotID", group = TRUE)
+#tries to find groupings that have similar means
+#group = true means find groups that have similar means
 Litter.Totals.groups
 
 # Graph the results
@@ -108,6 +119,7 @@ Litter.Totals.plot <- ggplot(Litter.Totals, aes(x = plotID, y = dryMass)) +
   labs(x = "Plot ID", y = "Dry Mass (g)") +
   ylim(0, 85)
 print(Litter.Totals.plot)
+#Should reorder groups
 ```
 
 What information does the output give us? How might we report this information in a report?
@@ -132,6 +144,7 @@ summary(Litter.anova.2way2)
 # Run a post-hoc test for pairwise differences
 TukeyHSD(Litter.anova.2way)
 
+
 ```
 
 ### Interaction effects
@@ -143,6 +156,7 @@ The output gives test statistics for each explanatory variable as well as the in
 ```{r}
 # Format as aov
 Litter.anova.2way3 <- aov(data = Litter, dryMass ~ functionalGroup * nlcdClass)
+#use times instead of plus to see interaction between them
 summary(Litter.anova.2way3)
 
 # Format as lm
