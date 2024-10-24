@@ -103,7 +103,10 @@ ggplot(NTL.LTER_wrangled, aes(x = depth, y = temperature_C)) +
 
 ```{r linear.regression}
 #7
-
+temp.depth.regression <- lm(
+  data = NTL.LTER_wrangled,
+  temperature_C ~ depth)
+summary(temp.depth.regression)
 
 ```
 
@@ -125,7 +128,9 @@ Let's tackle a similar question from a different approach. Here, we want to expl
 
 ```{r temperature.model}
 #9
-
+temp_AIC <- lm(data = NTL.LTER_wrangled, temperature_C ~ year4 + daynum + 
+              depth)
+step(temp_AIC)
 
 
 #10
