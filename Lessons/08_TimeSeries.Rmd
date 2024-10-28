@@ -37,7 +37,7 @@ mytheme <- theme_classic(base_size = 14) +
 theme_set(mytheme)
 
 #Read Eno river data
-EnoDischarge <- read.csv("./Data/Processed_KEY/USGS_Site02085000_Flow_Processed.csv",
+EnoDischarge <- read.csv("./Data/Processed/USGS_Site02085000_Flow_Processed.csv",
                          stringsAsFactors = TRUE)
 EnoDischarge$datetime <- as.Date(EnoDischarge$datetime, format = "%Y-%m-%d")
 
@@ -80,6 +80,7 @@ Let's look at what the dataset contains for mean daily discharge.
 ggplot(EnoDischarge, aes(x = datetime, y = discharge.mean)) +
   geom_line() +
   labs(x = "", y = expression("Discharge (ft"^3*"/s)"))
+#Gap will be a problem for TSA
 ```
 
 Notice there are missing data from 1971 to 1985. Gaps this large are generally an issue for time series analysis, as we don't have a continuous record of data or a good way to characterize any variability that happened over those years. We will illustrate a few workarounds to address these issues. 
@@ -90,9 +91,11 @@ Let's start by removing the NAs and splitting the dataset into the early and lat
 EnoDischarge.complete <- EnoDischarge %>%
   drop_na(discharge.mean)
 
+#Early years only
 EnoDischarge.early <- EnoDischarge.complete %>%
   filter(datetime < as.Date("1985-01-01"))
 
+#Later years only
 EnoDischarge.late <- EnoDischarge.complete %>%
   filter(datetime > as.Date("1985-01-01"))
 ```
