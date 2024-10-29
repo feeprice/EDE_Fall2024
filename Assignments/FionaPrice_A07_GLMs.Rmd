@@ -41,12 +41,10 @@ NTL.LTER.raw <- read.csv(here("Data/Raw/NTL-LTER_Lake_ChemistryPhysics_Raw.csv")
                    stringsAsFactors = TRUE)
 #Check the class of the date column.
 class(NTL.LTER.raw$sampledate)
-#Class is factor. Convert to date.
+#Convert to date.
 NTL.LTER.raw$sampledate <- as.Date(NTL.LTER.raw$sampledate, format = "%m/%d/%y")
 #Check that it's in date format.
 class(NTL.LTER.raw$sampledate)
-
-
 
 #2. Build ggplot theme.
 mytheme <- theme_minimal(base_size = 12) +
