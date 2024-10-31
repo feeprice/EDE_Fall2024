@@ -144,7 +144,9 @@ BR_Rain_Decomposed <- stl(BR_Rain_ts,
                           s.window = "periodic")
 plot(BR_Rain_Decomposed)
 
-
+BR_Temp_Decomposed <- stl(BR_Temp_ts,
+                          s.window = "periodic")
+plot(BR_Temp_Decomposed)
 
 
 
@@ -152,14 +154,27 @@ plot(BR_Rain_Decomposed)
 # Exercise 9: Use the times series object generated with the stl() to extract the 
 # components of each series and turn them into data frames.
 
+BR_Rain_Components <- as.data.frame(BR_Rain_Decomposed$time.series)
+BR_Temp_Components <- as.data.frame(BR_Temp_Decomposed$time.series)
 
+BR_Rain_Components <- mutate(BR_Rain_Components,
+                             Observed = BR_complete$Rainfall,
+                             Date = BR_complete$Date)
 
-
-
+BR_Temp_Components <- mutate(BR_Temp_Components,
+                             Observed = BR_complete$Temperature_C,
+                             Date = BR_complete$Date)
 
 # Exercise 10: Visualize how the trend maps onto the data for both series
 
+ggplot(BR_Rain_Components, aes(x = Date)) +
+  geom_line(aes(y = Observed)) +
+  geom_line(aes(y = trend), color = "red")
 
+ggplot(BR_Temp_Components, aes(x = Date)) +
+  geom_line(aes(y = Observed)) +
+  geom_line(aes(y = trend), color = "red") +
+  geom_line(aes(y = seasonal, color = "blue"))
 
 
 
