@@ -1,6 +1,6 @@
 ---
 title: "Assignment 8: Time Series Analysis"
-author: "Student Name"
+author: "Fiona Price"
 date: "Fall 2024"
 output: pdf_document
 geometry: margin=2.54cm
@@ -27,15 +27,28 @@ This exercise accompanies the lessons in Environmental Data Analytics on general
 * Set your ggplot theme
 
 ```{r}
+#Check working directory
+getwd()
 
+#Load packages
+library(tidyverse)
+library(lubridate)
+library(zoo)
+library(trend)
+library(here)
+#Set theme
 ```
 
 
 2. Import the ten datasets from the Ozone_TimeSeries folder in the Raw data folder. These contain ozone concentrations at Garinger High School in North Carolina from 2010-2019 (the EPA air database only allows downloads for one year at a time). Import these either individually or in bulk and then combine them into a single dataframe named `GaringerOzone` of 3589 observation and 20 variables. 
 
 ```{r, message = FALSE}
-#1
-
+#1. Import data in bulk and combine into a single dataframe.
+folder <- here('Data','Raw','Ozone_TimeSeries')
+files <- dir(folder,pattern = 'EPAair_O3*.*',full.names = T)
+GaringerOzone <- files %>%
+  map(read.csv) %>%
+  reduce(rbind)
 ```
 
 ## Wrangle
@@ -49,14 +62,23 @@ This exercise accompanies the lessons in Environmental Data Analytics on general
 6. Use a `left_join` to combine the data frames. Specify the correct order of data frames within this function so that the final dimensions are 3652 rows and 3 columns. Call your combined data frame GaringerOzone. 
 
 ```{r}
-# 3
+# 3. Set date column as date class.
+GaringerOzone$Date <- as.Date(GaringerOzone$Date, format = "%d/%m/%Y")
+#Check class.
+class(GaringerOzone$Date)
 
-# 4
+# 4. Wrangle your dataset so that it only contains the columns Date, Daily.Max.8.hour.Ozone.Concentration, and DAILY_AQI_VALUE. 
+GaringerOzone_wrangled <- GaringerOzone %>% 
+  select(Date, Daily.Max.8.hour.Ozone.Concentration, DAILY_AQI_VALUE)
 
-# 5
+# 5. Create a new data frame that contains a sequence of dates from 2010-01-01 
+#to 2019-12-31.
+Days <- as.data.frame(seq(as.Date("2010-01-01"), as.Date("2019-12-31"), by = "day"))
+#Rename the column to Date.
+colnames(Days) <- c("Date")
 
-# 6
-
+# 6. Use a `left_join` to combine the data frames.
+GaringerOzoneCombined <- left_join(Days, GaringerOzone_wrangled)
 
 ```
 
