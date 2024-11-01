@@ -123,9 +123,13 @@ summary(GaringerOzoneCombined$Daily.Max.8.hour.Ozone.Concentration)
 # Adding new column with no missing observations.
 Garinger_data_clean <- 
   GaringerOzoneCombined %>% 
-  mutate(Ozone.clean = zoo::na.approx(Daily.Max.8.hour.Ozone.Concentration))
+  mutate(Ozone.clean = zoo::na.approx(Daily.Max.8.hour.Ozone.Concentration,
+                                      na.rm = FALSE, rule = 2))
+#I had to add na.rm = FALSE to prevent the NAs from being omitted initially.
+#The rule = 2 allows the function to extrapolate for trailing NAs.
+#Check for NAs.
 summary(Garinger_data_clean$Ozone.clean)
-
+#No more NAs, and still have 3652 observations!
 ```
 
 > Answer: 
@@ -136,7 +140,7 @@ summary(Garinger_data_clean$Ozone.clean)
 ```{r}
 #9. Create a new data frame called `GaringerOzone.monthly` that contains 
 #aggregated data: mean ozone concentrations for each month. 
-GaringerOzone.monthly <- GaringerOzoneCombined %>%
+GaringerOzone.monthly <- Garinger_data_clean %>%
   mutate(Year = year(Date)) %>% 
   mutate(Month = month(Date)) %>% 
   group_by(Year, Month) %>% 
@@ -154,15 +158,29 @@ GaringerOzone.monthly <- GaringerOzone.monthly %>%
 10. Generate two time series objects. Name the first `GaringerOzone.daily.ts` and base it on the dataframe of daily observations. Name the second `GaringerOzone.monthly.ts` and base it on the monthly average ozone values. Be sure that each specifies the correct start and end dates and the frequency of the time series.
 
 ```{r}
-#10
-GaringerOzone.daily.ts <- 
+#10. Generate a time series object based on daily observations. 
+GaringerOzone.daily.ts <- ts(Garinger_data_clean$Ozone.clean, 
+                             start = c(2010), frequency = 365)
+# Generate a time series object based on monthly observations. 
+GaringerOzone.monthly.ts <- ts(GaringerOzone.monthly$Mean_Ozone, 
+                             start = c(2010), frequency = 12)
 ```
 
 
 11. Decompose the daily and the monthly time series objects and plot the components using the `plot()` function.
 
 ```{r}
-#11
+#11. Generate the decomposition for daily data.
+GaringerOzone.daily_Decomposed <- stl(GaringerOzone.daily.ts, s.window = "periodic")
+
+# Visualize the decomposed series. 
+plot(GaringerOzone.daily_Decomposed)
+
+# Generate the decomposition for monthly data.
+GaringerOzone.monthly_Decomposed <- stl(GaringerOzone.monthly.ts, s.window = "periodic")
+
+# Visualize the decomposed series. 
+plot(GaringerOzone.monthly_Decomposed)
 
 
 ```
@@ -171,10 +189,10 @@ GaringerOzone.daily.ts <-
 12. Run a monotonic trend analysis for the monthly Ozone series. In this case the seasonal Mann-Kendall is most appropriate; why is this?
 
 ```{r}
-#12
-
-
-
+#12. Run a monotonic trend analysis for the monthly Ozone series.
+monthly_data_trend <- Kendall::SeasonalMannKendall(GaringerOzone.monthly.ts)
+monthly_data_trend
+summary(monthly_data_trend)
 ```
 
 > Answer: 
@@ -183,9 +201,15 @@ GaringerOzone.daily.ts <-
 
 ```{r}
 # 13
-
-
-
+monthly_ozone_plot <-
+ggplot(GaringerOzone.monthly, aes(x = Date, y = Mean_Ozone)) +
+  geom_point() +
+  geom_line() +
+  labs(title = "Mean Monthly Ozone Concentrations Over Time",
+       y = "Mean Monthly Ozone (ppm)") +
+  geom_smooth(method = lm) +
+  mytheme
+print(monthly_ozone_plot)
 
 ```
 
@@ -198,15 +222,24 @@ GaringerOzone.daily.ts <-
 16. Run the Mann Kendall test on the non-seasonal Ozone monthly series. Compare the results with the ones obtained with the Seasonal Mann Kendall on the complete series.
 
 ```{r}
-#15
+#15. 
+GaringerMonthly_Components <- as.data.frame(GaringerOzone.monthly_Decomposed$time.series[,1:3])
 
+GaringerMonthly_Components <- mutate(GaringerMonthly_Components,
+        Observed = GaringerOzone.monthly$Mean_Ozone,     
+        Date = GaringerOzone.monthly$Date)
+
+GaringerMonthly_Components <- GaringerMonthly_Components %>% 
+  select(trend, remainder, Observed, Date)
 
 
 #16
+non.seasonal.ts <- ts(GaringerMonthly_Components$Observed, 
+                             start = c(2010), frequency = 12)
 
-
-
-
+non.seasonal <- Kendall::MannKendall(non.seasonal.ts)
+non.seasonal
+summary(non.seasonal)
 ```
 
 > Answer: 
