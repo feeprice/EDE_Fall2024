@@ -37,6 +37,12 @@ library(zoo)
 library(trend)
 library(here)
 #Set theme
+
+mytheme <- theme_classic(base_size = 12) +
+  theme(axis.text = element_text(color = "black"), 
+        legend.position = "right", 
+        plot.title = element_text(hjust = 0.5))
+theme_set(mytheme)
 ```
 
 
@@ -88,10 +94,18 @@ GaringerOzoneCombined <- left_join(Days, GaringerOzone_wrangled)
 
 ```{r}
 #7
-
+ggplot(GaringerOzoneCombined, aes(x = Date, 
+                                  y = Daily.Max.8.hour.Ozone.Concentration)) +
+  geom_line() +
+  geom_smooth(method = "lm") +
+  labs(title = "Ozone Concentrations Over Time",
+       x = "Year",
+       y = "Daily Max 8-Hour Ozone Concentration (ppm)") +
+  mytheme +
+  theme(axis.title.y = element_text(size = 10))
 ```
 
->Answer:
+>Answer: Yes, my plot suggests a downward trend in ozone concentration over time.
 
 ## Time Series Analysis
 
@@ -100,7 +114,17 @@ Study question: Have ozone concentrations changed over the 2010s at this station
 8. Use a linear interpolation to fill in missing daily data for ozone concentration. Why didn't we use a piecewise constant or spline interpolation?
 
 ```{r}
-#8
+#8. Use a linear interpolation to fill in missing daily data for ozone 
+#concentration. 
+head(GaringerOzoneCombined)
+summary(GaringerOzoneCombined$Daily.Max.8.hour.Ozone.Concentration)
+#There are 2231 NAs.
+
+# Adding new column with no missing observations.
+Garinger_data_clean <- 
+  GaringerOzoneCombined %>% 
+  mutate(Ozone.clean = zoo::na.approx(Daily.Max.8.hour.Ozone.Concentration))
+summary(Garinger_data_clean$Ozone.clean)
 
 ```
 
@@ -110,7 +134,19 @@ Study question: Have ozone concentrations changed over the 2010s at this station
 9. Create a new data frame called `GaringerOzone.monthly` that contains aggregated data: mean ozone concentrations for each month. In your pipe, you will need to first add columns for year and month to form the groupings. In a separate line of code, create a new Date column with each month-year combination being set as the first day of the month (this is for graphing purposes only)
 
 ```{r}
-#9
+#9. Create a new data frame called `GaringerOzone.monthly` that contains 
+#aggregated data: mean ozone concentrations for each month. 
+GaringerOzone.monthly <- GaringerOzoneCombined %>%
+  mutate(Year = year(Date)) %>% 
+  mutate(Month = month(Date)) %>% 
+  group_by(Year, Month) %>% 
+  summarise(Mean_Ozone = mean(Daily.Max.8.hour.Ozone.Concentration, na.rm = TRUE), 
+            .groups = 'drop')  
+
+#Create a new Date column with each month-year combination being set as 
+#the first day of the month.
+GaringerOzone.monthly <- GaringerOzone.monthly %>% 
+  mutate(Date = make_date(Year, month(Month), 1)) 
 
 ```
 
@@ -119,7 +155,7 @@ Study question: Have ozone concentrations changed over the 2010s at this station
 
 ```{r}
 #10
-
+GaringerOzone.daily.ts <- 
 ```
 
 
