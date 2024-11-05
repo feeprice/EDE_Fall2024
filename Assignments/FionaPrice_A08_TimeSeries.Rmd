@@ -26,7 +26,7 @@ This exercise accompanies the lessons in Environmental Data Analytics on general
 * Load the tidyverse, lubridate, zoo, and trend packages
 * Set your ggplot theme
 
-```{r}
+```{r include=FALSE}
 #Check working directory
 getwd()
 
@@ -51,10 +51,12 @@ theme_set(mytheme)
 ```{r, message = FALSE}
 #1. Import data in bulk and combine into a single dataframe.
 folder <- here('Data','Raw','Ozone_TimeSeries')
-files <- dir(folder,pattern = 'EPAair_O3*.*',full.names = T)
+files <- dir(folder,pattern = 'EPAair_O3*.*',full.names = T) #Looks for the
+#name pattern of EPAair_O3
+
 GaringerOzone <- files %>%
   map(read.csv) %>%
-  reduce(rbind)
+  reduce(rbind) #Combines multiple data frames by binding rows together
 ```
 
 ## Wrangle
@@ -73,19 +75,20 @@ GaringerOzone$Date <- as.Date(GaringerOzone$Date, format = "%d/%m/%Y")
 #Check class.
 class(GaringerOzone$Date)
 
-# 4. Wrangle your dataset so that it only contains the columns Date, Daily.Max.8.hour.Ozone.Concentration, and DAILY_AQI_VALUE. 
+# 4. Wrangle your dataset so that it only contains the columns Date, 
+#Daily.Max.8.hour.Ozone.Concentration, and DAILY_AQI_VALUE. 
 GaringerOzone_wrangled <- GaringerOzone %>% 
   select(Date, Daily.Max.8.hour.Ozone.Concentration, DAILY_AQI_VALUE)
 
 # 5. Create a new data frame that contains a sequence of dates from 2010-01-01 
 #to 2019-12-31.
-Days <- as.data.frame(seq(as.Date("2010-01-01"), as.Date("2019-12-31"), by = "day"))
+Days <- as.data.frame(seq(as.Date("2010-01-01"), as.Date("2019-12-31"), 
+                          by = "day"))
 #Rename the column to Date.
 colnames(Days) <- c("Date")
 
 # 6. Use a `left_join` to combine the data frames.
 GaringerOzoneCombined <- left_join(Days, GaringerOzone_wrangled)
-
 ```
 
 ## Visualize
@@ -93,16 +96,18 @@ GaringerOzoneCombined <- left_join(Days, GaringerOzone_wrangled)
 7. Create a line plot depicting ozone concentrations over time. In this case, we will plot actual concentrations in ppm, not AQI values. Format your axes accordingly. Add a smoothed line showing any linear trend of your data. Does your plot suggest a trend in ozone concentration over time?
 
 ```{r}
-#7
-ggplot(GaringerOzoneCombined, aes(x = Date, 
-                                  y = Daily.Max.8.hour.Ozone.Concentration)) +
-  geom_line() +
-  geom_smooth(method = "lm") +
+#7. Create a line plot depicting ozone concentrations over time.
+ozone_plot <- ggplot(GaringerOzoneCombined, 
+       aes(x = Date, y = Daily.Max.8.hour.Ozone.Concentration)) +
+  geom_line() + #Specify line graph
+  geom_smooth(method = "lm") + #Add smoothed trend line
   labs(title = "Ozone Concentrations Over Time",
        x = "Year",
-       y = "Daily Max 8-Hour Ozone Concentration (ppm)") +
-  mytheme +
-  theme(axis.title.y = element_text(size = 10))
+       y = "Daily Max 8-Hour Ozone Concentration (ppm)") + #Add labels
+  mytheme + #Add my theme
+  theme(axis.title.y = element_text(size = 10)) #Change size of y-axis label
+
+plot(ozone_plot)
 ```
 
 >Answer: Yes, my plot suggests a downward trend in ozone concentration over time.
@@ -116,7 +121,6 @@ Study question: Have ozone concentrations changed over the 2010s at this station
 ```{r}
 #8. Use a linear interpolation to fill in missing daily data for ozone 
 #concentration. 
-head(GaringerOzoneCombined)
 summary(GaringerOzoneCombined$Daily.Max.8.hour.Ozone.Concentration)
 #There are 2231 NAs.
 
@@ -132,7 +136,12 @@ summary(Garinger_data_clean$Ozone.clean)
 #No more NAs, and still have 3652 observations!
 ```
 
-> Answer: 
+> Answer: A piecewise constant interpolation method assumes that missing data
+are equal to the measurement made nearest to that date; essentially, it assumes
+that the value remainds constant over time. However, our value is changing over
+time, so a piecewise constant fails to capture that. A spline method would also
+not be the best choice for our data set because our data shows a linear trend 
+over time, while the splien uses a quadratic function to interpolate.
 
 
 9. Create a new data frame called `GaringerOzone.monthly` that contains aggregated data: mean ozone concentrations for each month. In your pipe, you will need to first add columns for year and month to form the groupings. In a separate line of code, create a new Date column with each month-year combination being set as the first day of the month (this is for graphing purposes only)
@@ -151,7 +160,6 @@ GaringerOzone.monthly <- Garinger_data_clean %>%
 #the first day of the month.
 GaringerOzone.monthly <- GaringerOzone.monthly %>% 
   mutate(Date = make_date(Year, month(Month), 1)) 
-
 ```
 
 
@@ -161,6 +169,7 @@ GaringerOzone.monthly <- GaringerOzone.monthly %>%
 #10. Generate a time series object based on daily observations. 
 GaringerOzone.daily.ts <- ts(Garinger_data_clean$Ozone.clean, 
                              start = c(2010), frequency = 365)
+
 # Generate a time series object based on monthly observations. 
 GaringerOzone.monthly.ts <- ts(GaringerOzone.monthly$Mean_Ozone, 
                              start = c(2010), frequency = 12)
@@ -181,8 +190,6 @@ GaringerOzone.monthly_Decomposed <- stl(GaringerOzone.monthly.ts, s.window = "pe
 
 # Visualize the decomposed series. 
 plot(GaringerOzone.monthly_Decomposed)
-
-
 ```
 
 
@@ -193,53 +200,75 @@ plot(GaringerOzone.monthly_Decomposed)
 monthly_data_trend <- Kendall::SeasonalMannKendall(GaringerOzone.monthly.ts)
 monthly_data_trend
 summary(monthly_data_trend)
+
+# We can use another Seasonal Mann-Kendall function to extract data for specific
+# seasons as well.
+monthly_data_trend2 <- trend::smk.test(GaringerOzone.monthly.ts)
+summary(monthly_data_trend2)
 ```
 
-> Answer: 
+> Answer: Because our trend is not exactly linear, we need to use a different
+trend analysis method. The Mann-Kendall test does not assume anything about
+the linearity or distribution of the data, making it a better fit in our case.
+Furthermore, it allows for missing data (which we have). Specifically, the
+seasonal Mann-Kendall test should be use to consider periodic fluctuations due 
+to seasonality. 
 
 13. Create a plot depicting mean monthly ozone concentrations over time, with both a geom_point and a geom_line layer. Edit your axis labels accordingly.
 
 ```{r}
-# 13
+# 13. Create a plot depicting mean monthly ozone concentrations over time.
 monthly_ozone_plot <-
 ggplot(GaringerOzone.monthly, aes(x = Date, y = Mean_Ozone)) +
-  geom_point() +
-  geom_line() +
+  geom_point() + #specify scatter plot
+  geom_line() + #add lines to connect points 
   labs(title = "Mean Monthly Ozone Concentrations Over Time",
-       y = "Mean Monthly Ozone (ppm)") +
-  geom_smooth(method = lm) +
-  mytheme
+       y = "Mean Monthly Ozone (ppm)") + #edit titles
+  geom_smooth(method = lm) + #add trend line
+  mytheme #add my theme
 print(monthly_ozone_plot)
 
 ```
 
 14. To accompany your graph, summarize your results in context of the research question. Include output from the statistical test in parentheses at the end of your sentence. Feel free to use multiple sentences in your interpretation.
 
-> Answer: 
+> Answer: Mean monthly ozone concentrations have decreased over the 2010s at 
+this station. This trend is statistically significant, meaning the null 
+hypothesis (that there is no trend over time) is rejected (pvalue =0.00048451). 
+The trend is moderately negative based on Kendall's tau statistic, which ranges
+from -1 to 1 (-0.251 for our data). There is also a fair bit of variation in the
+plot, which is also reflected in our variance score (1497). 
 
 15. Subtract the seasonal component from the `GaringerOzone.monthly.ts`. Hint: Look at how we extracted the series components for the EnoDischarge on the lesson Rmd file.
 
 16. Run the Mann Kendall test on the non-seasonal Ozone monthly series. Compare the results with the ones obtained with the Seasonal Mann Kendall on the complete series.
 
 ```{r}
-#15. 
-GaringerMonthly_Components <- as.data.frame(GaringerOzone.monthly_Decomposed$time.series[,1:3])
+#15. Extract the components and turn them into a data frame. 
+GaringerMonthly_Components <- as.data.frame(GaringerOzone.monthly_Decomposed$time.series)
 
+# Change column names
 GaringerMonthly_Components <- mutate(GaringerMonthly_Components,
         Observed = GaringerOzone.monthly$Mean_Ozone,     
         Date = GaringerOzone.monthly$Date)
 
+# Select specific time series components (note we are NOT selecting seasonality).
 GaringerMonthly_Components <- GaringerMonthly_Components %>% 
   select(trend, remainder, Observed, Date)
 
 
-#16
+#16. Run the Mann Kendall test on the non-seasonal Ozone monthly series. 
 non.seasonal.ts <- ts(GaringerMonthly_Components$Observed, 
                              start = c(2010), frequency = 12)
 
 non.seasonal <- Kendall::MannKendall(non.seasonal.ts)
-non.seasonal
+# Show results
 summary(non.seasonal)
 ```
 
-> Answer: 
+> Answer: The non-seasonal trend in monthly ozone concentrations is less negative 
+(though it is still negative) than the seasonal one, as seen in the higher tau 
+statistic (-0.216 vs. -0.251). Additionally, there is more variation 
+(194311.7 vs. 1497). Both of these trends are statistically significant. Overall,
+for both the seasonal and non-seasonal monthly ozone time series, ozone
+concentrations decrease over time. 
