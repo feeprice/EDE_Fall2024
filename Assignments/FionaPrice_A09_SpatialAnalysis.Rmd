@@ -1,6 +1,6 @@
 ---
 title: "Assignment 9: Spatial Analysis in R"
-author: "Student Name"
+author: "Fiona Price"
 output: html_document
 editor_options: 
   chunk_output_type: console
@@ -112,7 +112,7 @@ glimpse(gages_sf)
 
 12.   What new field(s) appear in the sf dataframe created? What field(s), if any, disappeared?
 
->ANSWER: A new column titled geometry appeared, while the latitude and longitude
+>ANSWER: A new column titled "geometry" appeared, while the latitude and longitude
 columns disappeared. 
 
 
@@ -127,8 +127,10 @@ columns disappeared.
 ```{r Plot the spatial features}
 #13. Plot the gage locations atop the county features
 ggplot() +
-  geom_sf(data = NE_counties) +
-  geom_sf(data = gages_sf)
+  geom_sf(data = NE_counties, fill = "red") +
+  geom_sf(data = gages_sf, color = "blue") +
+  labs(title = "NWIS Gage Locations in Nebraska",
+       subtitle = "Fiona Price")
 ```
 
 
@@ -157,7 +159,7 @@ colnames(site_flow)
 
 #16. Join the flow data to our NWIS gage location spatial dataframe
 flow_data <- gages_sf %>% 
-  left_join(site_flow)
+  merge(site_flow)
 
 
 #17. Show the column names in the resulting spatial dataframe
@@ -178,9 +180,9 @@ Now we can examine where the flooding appears most acute by visualizing gage hei
 
 ```{r map gage sites}
 #Map the points, sized by gage height
-map1 <- mapView(NE_counties, col.regions = "gray")
-map2 <- mapView(flow_data, cex = "gage_ht")
-map1 + map2
+countymap <- mapView(NE_counties, col.regions = "red")
+gagemap <- mapView(flow_data, cex = "gage_ht")
+countymap + gagemap
 ```
 
 ---
@@ -203,7 +205,7 @@ transformed_gages <- st_transform(gages_sf, crs = 32614)
 
 #21 Plot the data
 ggplot() +
-  geom_sf(data = transformed_counties, color = "red") +
+  geom_sf(data = transformed_counties, fill = "red") +
   geom_sf(data = transformed_gages, color = "blue")
 
 ```
@@ -227,12 +229,12 @@ Now let's zoom into a particular county and examine the gages located there.
 lancaster <- transformed_counties %>% 
   filter(NAME == "Lancaster")
 
-mapview(lancaster, color = "red")
+mapview(lancaster)
 
 
 #23 Spatially select gages within the selected county
-lancaster_gages <- transformed_gages %>%  
-  st_filter(lancaster, .predicate = st_intersects)
+lancaster_gages <- lancaster %>%
+  st_intersection(transformed_gages)
 
 #View the result
 mapview(lancaster_gages)
@@ -242,10 +244,13 @@ mapview(lancaster_gages)
 # Add a 15 km buffer to Lancaster county. 
 lancaster_buffer_15km <- st_buffer(lancaster, 15000)
 # Spatially select gages within this new buffered zone.
-gages_buffered <- transformed_gages %>%  
-  st_filter(lancaster_buffer_15km, .predicate = st_intersects)
+gages_buffered <- lancaster_buffer_15km %>%
+  st_intersection(transformed_gages)
 
 
 #25 Plot
-mapview(gages_buffered)
+mapview(gages_buffered, col.regions = "grey") +
+  mapview(lancaster_gages, col.regions = "red") +
+  mapview(lancaster, col.regions = "blue") +
+  mapview(transformed_counties, col.regions = "light blue")
 ```
