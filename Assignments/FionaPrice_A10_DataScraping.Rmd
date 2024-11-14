@@ -112,16 +112,20 @@ MGD
 ```{r create.a.dataframe.from.scraped.data}
 #4. Start with a dataframe that has a month, year, and MGD column.
 df_withdrawals <- data.frame("Month" = rep(1:12), 
-                             "Year" = rep(2023,12),
-                             "Max_Daily_Use" = as.numeric(MGD))
-
+                      #Create a column that repeats the month for 1-12
+                             "Year" = rep(2023,12), 
+                      #Create a column that repeats 2023 12 times
+                             "Max_Daily_Use" = as.numeric(MGD)) 
+                      #Create a numeric MGD column 
+                          
 #Now mutate the dataframe to include the system name, the PWSID, the ownership
 #type, and the date. 
 df_withdrawals <- df_withdrawals %>% 
   mutate(System_Name = !!water_system_name,
          PWSID = !!PWSID,
          Ownership_Type = !!ownership,
-         Date = my(paste(Month,"-",Year)))
+         Date = my(paste(Month,"-",Year))) #Paste my new year and month columns
+#created above to a date column
 
 
 #5. Create a line plot of the maximum daily withdrawals across the months for 2023.
@@ -130,7 +134,7 @@ ggplot(df_withdrawals,aes(x=Date,y=Max_Daily_Use)) +
   geom_smooth(method="loess",se=FALSE) +
   labs(title = paste("2023 Water usage data for",water_system_name, ownership),
        y="Maximum Daily Withdrawal (mgd)",
-       x="Date") +
+       x="Date") + 
   mytheme
 
 
