@@ -1,6 +1,6 @@
 ---
 title: "Assignment 10: Data Scraping"
-author: "Student Name"
+author: "Fiona Price"
 output: pdf_document
 editor_options: 
   chunk_output_type: console
@@ -26,11 +26,20 @@ This exercise accompanies the lessons in Environmental Data Analytics on data sc
 * Check your working directory
 
 ```{r 1. Project Setup, message = FALSE}
-#1 
+#1. Load in the necessary packages.
 library(tidyverse)
 library(lubridate)
 library(here); here()
 library(rvest)
+
+#Check working directory.
+here()
+
+#Set a theme.
+mytheme <- theme_gray() +
+  theme(axis.text = element_text(color = "black"), 
+        legend.position = "right")
+theme_set(mytheme)
 ```
 
 2. We will be scraping data from the NC DEQs Local Water Supply Planning website, specifically the Durham's 2023 Municipal Local Water Supply Plan (LWSP): 
@@ -41,7 +50,7 @@ library(rvest)
 Indicate this website as the as the URL to be scraped. (In other words, read the contents into an `rvest` webpage object.)
 
 ```{r set.the.scraping.website}
-#2 
+#2. Read the contents into a webpage object.
 webpage <- read_html(
   'https://www.ncwater.org/WUDC/app/LWSP/report.php?pwsid=03-32-010&year=2023')
 webpage
@@ -62,25 +71,32 @@ In the code chunk below scrape these values, assigning them to four separate var
 >HINT: The first value should be "Durham", the second "03-32-010", the third "Municipality", and the last should be a vector of 12 numeric values (represented as strings)".
 
 ```{r scrape.the.data}
-#3 
+#3. Using the chrome SelectorGadget extension, collect the water system name.
 water_system_name <- webpage %>% 
   html_nodes("div+ table tr:nth-child(1) td:nth-child(2)") %>% 
   html_text()
+#Check to see that it's "Durham."
 water_system_name
 
+#Using the chrome SelectorGadget extension, collect the PWSID.
 PWSID <- webpage %>% 
   html_nodes("td tr:nth-child(1) td:nth-child(5)") %>% 
   html_text()
+#Check to see that it's "03-32-010."
 PWSID
 
+#Using the chrome SelectorGadget extension, collect the Ownership data.
 ownership <- webpage %>% 
   html_nodes("div+ table tr:nth-child(2) td:nth-child(4)") %>% 
   html_text()
+#Check to see that it's "Municipality." 
 ownership
 
+#Using the chrome SelectorGadget extension, collect the MGD data.
 MGD <- webpage %>% 
   html_nodes("th~ td+ td") %>% 
   html_text()
+#Check to see that it's a vector of 12 numeric values.
 MGD
 ```
 
@@ -94,11 +110,13 @@ MGD
 5. Create a line plot of the maximum daily withdrawals across the months for 2023, making sure, the months are presented in proper sequence.
 
 ```{r create.a.dataframe.from.scraped.data}
-#4 
-df_withdrawals <- data.frame("Month" = rep(1:12),
+#4. Start with a dataframe that has a month, year, and MGD column.
+df_withdrawals <- data.frame("Month" = rep(1:12), 
                              "Year" = rep(2023,12),
                              "Max_Daily_Use" = as.numeric(MGD))
 
+#Now mutate the dataframe to include the system name, the PWSID, the ownership
+#type, and the date. 
 df_withdrawals <- df_withdrawals %>% 
   mutate(System_Name = !!water_system_name,
          PWSID = !!PWSID,
@@ -106,13 +124,14 @@ df_withdrawals <- df_withdrawals %>%
          Date = my(paste(Month,"-",Year)))
 
 
-#5 
+#5. Create a line plot of the maximum daily withdrawals across the months for 2023.
 ggplot(df_withdrawals,aes(x=Date,y=Max_Daily_Use)) + 
   geom_line() + 
   geom_smooth(method="loess",se=FALSE) +
   labs(title = paste("2023 Water usage data for",water_system_name, ownership),
        y="Maximum Daily Withdrawal (mgd)",
-       x="Date")
+       x="Date") +
+  mytheme
 
 
 ```
