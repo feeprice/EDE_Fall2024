@@ -27,8 +27,10 @@ This exercise accompanies the lessons in Environmental Data Analytics on data sc
 
 ```{r 1. Project Setup, message = FALSE}
 #1 
-
-
+library(tidyverse)
+library(lubridate)
+library(here); here()
+library(rvest)
 ```
 
 2. We will be scraping data from the NC DEQs Local Water Supply Planning website, specifically the Durham's 2023 Municipal Local Water Supply Plan (LWSP): 
@@ -40,7 +42,9 @@ Indicate this website as the as the URL to be scraped. (In other words, read the
 
 ```{r set.the.scraping.website}
 #2 
-
+webpage <- read_html(
+  'https://www.ncwater.org/WUDC/app/LWSP/report.php?pwsid=03-32-010&year=2023')
+webpage
 ```
 
 3. The data we want to collect are listed below:
@@ -59,8 +63,25 @@ In the code chunk below scrape these values, assigning them to four separate var
 
 ```{r scrape.the.data}
 #3 
+water_system_name <- webpage %>% 
+  html_nodes("div+ table tr:nth-child(1) td:nth-child(2)") %>% 
+  html_text()
+water_system_name
 
+PWSID <- webpage %>% 
+  html_nodes("td tr:nth-child(1) td:nth-child(5)") %>% 
+  html_text()
+PWSID
 
+ownership <- webpage %>% 
+  html_nodes("div+ table tr:nth-child(2) td:nth-child(4)") %>% 
+  html_text()
+ownership
+
+MGD <- webpage %>% 
+  html_nodes("th~ td+ td") %>% 
+  html_text()
+MGD
 ```
 
 
@@ -74,9 +95,24 @@ In the code chunk below scrape these values, assigning them to four separate var
 
 ```{r create.a.dataframe.from.scraped.data}
 #4 
+df_withdrawals <- data.frame("Month" = rep(1:12),
+                             "Year" = rep(2023,12),
+                             "Max_Daily_Use" = as.numeric(MGD))
+
+df_withdrawals <- df_withdrawals %>% 
+  mutate(System_Name = !!water_system_name,
+         PWSID = !!PWSID,
+         Ownership_Type = !!ownership,
+         Date = my(paste(Month,"-",Year)))
 
 
 #5 
+ggplot(df_withdrawals,aes(x=Date,y=Max_Daily_Use)) + 
+  geom_line() + 
+  geom_smooth(method="loess",se=FALSE) +
+  labs(title = paste("2023 Water usage data for",water_system_name, ownership),
+       y="Maximum Daily Withdrawal (mgd)",
+       x="Date")
 
 
 ```
@@ -86,6 +122,48 @@ In the code chunk below scrape these values, assigning them to four separate var
 
 ```{r construct.a.scraping.function}
 #6. 
+the_base_url <- 'https://www.ncwater.org/WUDC/app/LWSP/report.php?'
+the_pwsid <- '03-32-010'
+the_year <- 2015
+the_scrape_url <- paste0(the_base_url, 'pwsid=', the_pwsid, '&year=', the_year)
+print(the_scrape_url)
+
+
+#Create our scraping function
+scrape.it <- function(the_year, the_pwsid){
+  
+  #Retrieve the website contents 
+  the_website <- read_html(paste0('https://www.ncwater.org/WUDC/app/LWSP/report.php?', 
+                                  'pwsid=', the_pwsid, '&year=', the_year))
+  
+  #Set the element address variables (determined in the previous step)
+  system_tag <- 'div+ table tr:nth-child(1) td:nth-child(2)'
+  ownership_tag <- 'div+ table tr:nth-child(2) td:nth-child(4)'
+  pwsid_tag <- 'td tr:nth-child(1) td:nth-child(5)'
+  mgd_tag <- 'th~ td+ td'
+  
+  #Scrape the data items
+  the_system <- the_website %>% html_nodes(system_tag) %>% html_text()
+  the_ownership <- the_website %>% html_nodes(ownership_tag) %>% html_text()
+  the_pwsid <- the_website %>% html_nodes(pwsid_tag) %>% html_text()
+  the_mgd <- the_website %>% html_nodes(mgd_tag) %>% html_text()
+  
+  #Convert to a dataframe
+  df_withdrawals <- data.frame("Month" = rep(1:12),
+                               "Year" = rep(the_year,12),
+                               "Max_Daily_Withdrawals" = as.numeric(the_mgd)) %>% 
+    mutate(System_Name = !!the_system,
+         Ownership_Type = !!the_ownership,
+         PWSID = !!the_pwsid,
+         Date = my(paste(Month,"-",Year)))
+  
+  #Pause for a moment - scraping etiquette
+  Sys.sleep(1) #uncomment this if you are doing bulk scraping!
+  
+  #Return the dataframe
+  return(df_withdrawals)
+}
+
 
 
 ```
@@ -94,7 +172,16 @@ In the code chunk below scrape these values, assigning them to four separate var
 
 ```{r fetch.and.plot.Durham.2015.data}
 #7 
+df_withdrawals <- scrape.it(2015,'03-32-010')
+view(df_withdrawals)
 
+ggplot(df_withdrawals,aes(x=Date,y=Max_Daily_Withdrawals)) + 
+  geom_line() + 
+  geom_smooth(method="loess",se=FALSE) +
+  labs(title = paste(the_year,"Water usage data for", df_withdrawals$System_Name,
+                     df_withdrawals$Ownership_Type),
+       y="Withdrawal (mgd)",
+       x="Date")
 
 ```
 
@@ -102,8 +189,15 @@ In the code chunk below scrape these values, assigning them to four separate var
 
 ```{r fetch.and.plot.Asheville.2015.data}
 #8 
+asheville_df <- scrape.it(2015,'01-11-010')
+combined_mgd <- rbind(df_withdrawals, asheville_df)
 
-
+ggplot(combined_mgd,aes(x=Date,y=Max_Daily_Withdrawals,color=System_Name)) + 
+  #geom_line() + 
+  geom_smooth(method="loess",se=FALSE) +
+  labs(title = "Water usage data",
+       y="Withdrawal (mgd)",
+       x="Date")
 ```
 
 
@@ -113,6 +207,10 @@ In the code chunk below scrape these values, assigning them to four separate var
 
 ```{r fetch.and.plot.Asheville.multiyear.data }
 #9 
+the_years = (2018:2022)
+asheville_pwsid <- '01-11-010'
+asheville_dfs <- map2(the_years, asheville_pwsid, scrape.it) %>% 
+  bind_rows()
 
 
 ```
