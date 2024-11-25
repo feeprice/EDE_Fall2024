@@ -35,11 +35,6 @@ library(rvest)
 #Check working directory.
 here()
 
-#Set a theme.
-mytheme <- theme_gray() +
-  theme(axis.text = element_text(color = "black"), 
-        legend.position = "right")
-theme_set(mytheme)
 ```
 
 2. We will be scraping data from the NC DEQs Local Water Supply Planning website, specifically the Durham's 2023 Municipal Local Water Supply Plan (LWSP): 
@@ -134,9 +129,12 @@ ggplot(df_withdrawals,aes(x=Date,y=Max_Daily_Use)) +
   geom_smooth(method="loess",se=FALSE) +
   labs(title = paste("2023 Water usage data for",water_system_name, ownership),
        y="Maximum Daily Withdrawal (mgd)",
-       x="Date") + 
-  mytheme
-
+       x="Date") +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1)) + #Rotate to include
+  #more x-axis labels
+  scale_x_date(
+    date_breaks = "1 month", #Adjust x-axis labels to include all months 
+    date_labels = "%b %Y")     #Adjust label to include name of month
 
 ```
 
@@ -179,48 +177,54 @@ scrape.it <- function(the_year, the_pwsid){
          Ownership_Type = !!the_ownership,
          PWSID = !!the_pwsid,
          Date = my(paste(Month,"-",Year)))
-  
-  #Pause for a moment - scraping etiquette
-  Sys.sleep(1) #uncomment this if you are doing bulk scraping!
-  
   #Return the dataframe
   return(df_withdrawals)
 }
-
-
 
 ```
 
 7. Use the function above to extract and plot max daily withdrawals for Durham (PWSID='03-32-010') for each month in 2015
 
 ```{r fetch.and.plot.Durham.2015.data}
-#7 
+#7. Extract data for Durham 2015.
 df_withdrawals <- scrape.it(2015,'03-32-010')
 view(df_withdrawals)
 
+#Plot daily max withdrawals.
 ggplot(df_withdrawals,aes(x=Date,y=Max_Daily_Withdrawals)) + 
   geom_line() + 
   geom_smooth(method="loess",se=FALSE) +
   labs(title = paste(the_year,"Water usage data for", df_withdrawals$System_Name,
                      df_withdrawals$Ownership_Type),
        y="Withdrawal (mgd)",
-       x="Date")
+       x="Date") +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1)) + #Rotate to include
+  #more x-axis labels
+  scale_x_date(
+    date_breaks = "1 month", #Adjust x-axis labels to include all months 
+    date_labels = "%b %Y")     
 
 ```
 
 8. Use the function above to extract data for Asheville (PWSID = 01-11-010) in 2015. Combine this data with the Durham data collected above and create a plot that compares Asheville's to Durham's water withdrawals.
 
 ```{r fetch.and.plot.Asheville.2015.data}
-#8 
+#8. Extract data for Asheville 2015.
 asheville_df <- scrape.it(2015,'01-11-010')
+#Combine with the Durham data.
 combined_mgd <- rbind(df_withdrawals, asheville_df)
 
+#Plot Asheville vs. Durham water withdrawals.
 ggplot(combined_mgd,aes(x=Date,y=Max_Daily_Withdrawals,color=System_Name)) + 
-  #geom_line() + 
-  geom_smooth(method="loess",se=FALSE) +
+  geom_line() +
   labs(title = "Water usage data",
        y="Withdrawal (mgd)",
-       x="Date")
+       x="Date") +
+    theme(axis.text.x = element_text(angle = 45, hjust = 1)) + #Rotate to include
+  #more x-axis labels
+  scale_x_date(
+    date_breaks = "1 month", #Adjust x-axis labels to include all months 
+    date_labels = "%b %Y")     
 ```
 
 
@@ -235,9 +239,22 @@ asheville_pwsid <- '01-11-010'
 asheville_dfs <- map2(the_years, asheville_pwsid, scrape.it) %>% 
   bind_rows()
 
+#Plot. Add a smoothed line. 
+ggplot(asheville_dfs,aes(y = Max_Daily_Withdrawals, x=Date)) +
+  geom_line() +
+  geom_smooth(method="loess",se=FALSE) +
+  labs(title = "Asheville Max Daily Withdrawls, 2018-2022",
+       y="Withdrawal (mgd)",
+       x="Date") +
+    theme(axis.text.x = element_text(angle = 45, hjust = 1)) + #Rotate to include
+  #more x-axis labels
+  scale_x_date(
+    date_breaks = "6 months", #Adjust x-axis labels to include every half a year
+    date_labels = "%b %Y")     
 
 ```
 
 Question: Just by looking at the plot (i.e. not running statistics), does Asheville have a trend in water usage over time?
-> Answer:
+> Answer: Yes, Asheville's max daily water use seems to be increasing over time, 
+though there was a dip in 2020 (possibly related to COVID-19). 
 >
