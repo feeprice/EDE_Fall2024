@@ -233,9 +233,10 @@ ggplot(combined_mgd,aes(x=Date,y=Max_Daily_Withdrawals,color=System_Name)) +
 > TIP: See Section 3.2 in the "10_Data_Scraping.Rmd" where we apply "map2()" to iteratively run a function over two inputs. Pipe the output of the map2() function to `bindrows()` to combine the dataframes into a single one. 
 
 ```{r fetch.and.plot.Asheville.multiyear.data }
-#9 
+#9. Subset the years we want to look at. 
 the_years = (2018:2022)
 asheville_pwsid <- '01-11-010'
+#Bind the dataframes together, based on the years and pwsid. 
 asheville_dfs <- map2(the_years, asheville_pwsid, scrape.it) %>% 
   bind_rows()
 
